@@ -4,6 +4,29 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
     header('Location: home.php');
     exit();
 }
+
+// Database connection
+$host = 'localhost';
+$user = 'root';
+$pass = '';
+$db = 'wandermate';
+$conn = new mysqli($host, $user, $pass, $db);
+if ($conn->connect_error) {
+    die('Database connection failed: ' . $conn->connect_error);
+}
+
+// Fetch total packages
+$packageCount = 0;
+$orderCount = 0;
+$packageResult = $conn->query('SELECT COUNT(*) AS total FROM packages');
+if ($packageResult && $row = $packageResult->fetch_assoc()) {
+    $packageCount = $row['total'];
+}
+// Fetch total orders
+$orderResult = $conn->query('SELECT COUNT(*) AS total FROM orders');
+if ($orderResult && $row = $orderResult->fetch_assoc()) {
+    $orderCount = $row['total'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -546,11 +569,11 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                 <h2 class="stats-title">Quick Stats</h2>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-value">42</div>
+                        <div class="stat-value"><?php echo $packageCount; ?></div>
                         <div class="stat-label">Total Packages</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value">156</div>
+                        <div class="stat-value"><?php echo $orderCount; ?></div>
                         <div class="stat-label">Total Orders</div>
                     </div>
                 </div>
