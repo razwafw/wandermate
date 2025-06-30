@@ -2,6 +2,71 @@
 session_start();
 $loggedIn = isset($_SESSION['user_id']);
 $role_id = $_SESSION['role_id'] ?? 1;
+
+// Fetch package ID from query param
+$packageId = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// Database connection
+$conn = new mysqli('localhost', 'root', '', 'wandermate');
+if ($conn->connect_error) {
+    die('Database connection failed: ' . $conn->connect_error);
+}
+
+// Fetch package data
+$sql = 'SELECT p.*, (SELECT url FROM images WHERE package_id = p.id LIMIT 1) AS image_url FROM packages p WHERE  p.id = ?';
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $packageId);
+$stmt->execute();
+$result = $stmt->get_result();
+$package = $result->fetch_assoc();
+
+// Fetch all images for this package
+$images = [];
+if ($package) {
+    $imgStmt = $conn->prepare('SELECT url FROM images WHERE package_id = ?');
+    $imgStmt->bind_param('i', $packageId);
+    $imgStmt->execute();
+    $imgResult = $imgStmt->get_result();
+    while ($imgRow = $imgResult->fetch_assoc()) {
+        $images[] = $imgRow['url'];
+    }
+    $imgStmt->close();
+}
+$stmt->close();
+$conn->close();
+
+if (!$package) {
+    header('Location: package-list.php');
+    exit();
+}
+
+// Parse highlights, includes, excludes, itinerary
+function parseNewlineList($str)
+{
+    return array_filter(array_map('trim', explode("\n", $str)));
+}
+
+function parseItinerary($str)
+{
+    $result = [];
+    foreach (parseNewlineList($str) as $line) {
+        $parts = explode('|', $line, 2);
+        $day = isset($parts[0]) ? trim($parts[0]) : '';
+        $desc = isset($parts[1]) ? trim($parts[1]) : '';
+        if ($day !== '' && $desc !== '') {
+            $result[] = [
+                'day' => $day,
+                'desc' => $desc,
+            ];
+        }
+    }
+    return $result;
+}
+
+$highlights = parseNewlineList($package['highlights']);
+$includes = parseNewlineList($package['includes']);
+$excludes = parseNewlineList($package['excludes']);
+$itinerary = parseItinerary($package['itinerary']);
 ?>
 
 <!DOCTYPE html>
@@ -627,67 +692,6 @@ $role_id = $_SESSION['role_id'] ?? 1;
 
     <!-- Page Content -->
     <main>
-        <?php
-        // Get package ID from URL parameter
-        $id = isset($_GET['id']) ? intval($_GET['id']) : 1;
-
-        // Demo data - in a real application, this would come from a database
-        $packageData = [
-            'id' => $id,
-            'name' => 'Bali Paradise Retreat',
-            'subtitle' => '7-day retreat package to experience the magic of Bali',
-            'price' => 1299,
-            'duration' => '7 days / 6 nights',
-            'group_size' => '2-16 people',
-            'location' => 'Bali, Indonesia',
-            'start_location' => 'Ngurah Rai International Airport, Denpasar',
-            'end_location' => 'Ngurah Rai International Airport, Denpasar',
-            'accommodation' => '4-star hotels and luxury villas',
-            'description' => 'Experience the magic of Bali with our 7-day retreat package. This carefully crafted journey takes you through the cultural heart of the island, with visits to sacred temples, relaxing days on pristine beaches, and immersive experiences in local village life. From the vibrant streets of Ubud to the serene shores of Nusa Dua, this trip offers the perfect balance of adventure and relaxation.',
-            'highlights' => [
-                'Guided tour of ancient temples including Tanah Lot and Uluwatu',
-                'Relaxing spa day with traditional Balinese treatments',
-                'Cooking class to learn authentic Indonesian cuisine',
-                'Sunrise trek to Mount Batur volcano',
-                'Snorkeling at the vibrant coral gardens of Nusa Penida',
-                'Cultural dance performance with dinner',
-                'Free time to explore beaches and local markets',
-            ],
-            'includes' => [
-                'Airport transfers',
-                'All accommodations',
-                'Daily breakfast, 4 lunches, and 3 dinners',
-                'English-speaking local guide',
-                'All activities and entrance fees mentioned in the itinerary',
-                'Transportation in air-conditioned vehicles',
-            ],
-            'excludes' => [
-                'International flights',
-                'Travel insurance',
-                'Meals not mentioned in the itinerary',
-                'Personal expenses and souvenirs',
-                'Optional activities not in the itinerary',
-                'Visa fees (if applicable)',
-            ],
-            'itinerary' => [
-                'Day 1: Arrival in Bali & Welcome Dinner' => 'Arrive at Ngurah Rai International Airport where you\'ll be greeted by your guide. Transfer to your hotel in Seminyak for check-in and relaxation. In the evening, enjoy a welcome dinner featuring traditional Balinese cuisine and a cultural dance performance.',
-                'Day 2: Sacred Temples & Ubud Transfer' => 'After breakfast, visit the iconic sea temple of Tanah Lot. Continue to Mengwi to explore the royal temple of Taman Ayun. Afternoon transfer to Ubud, stopping at a coffee plantation to taste authentic Balinese coffee. Evening at leisure to explore Ubud\'s charming streets.',
-                'Day 3: Ubud Cultural Immersion' => 'Morning visit to Ubud Monkey Forest and the Royal Palace. Participate in a traditional Balinese cooking class where you\'ll learn to prepare local dishes. Afternoon visit to local artisan workshops specializing in woodcarving, painting, and silversmithing.',
-                'Day 4: Mount Batur Sunrise Trek & Hot Springs' => 'Early morning departure for a sunrise trek up Mount Batur volcano. Enjoy breakfast with panoramic views at the summit. Afterward, soothe your muscles with a visit to natural hot springs. Afternoon at leisure with optional spa treatments available.',
-                'Day 5: Nusa Penida Island Excursion' => 'Full-day excursion to Nusa Penida island. Visit Kelingking Beach viewpoint and Angel\'s Billabong. Enjoy snorkeling in Crystal Bay to discover vibrant coral reefs and tropical fish. Return to mainland Bali in the late afternoon.',
-                'Day 6: Beach Day & Uluwatu Temple Sunset' => 'Morning at leisure to enjoy the beach or optional water activities. Late afternoon visit to cliff-top Uluwatu Temple to witness the famous Kecak fire dance at sunset. Farewell seafood dinner at Jimbaran Bay.',
-                'Day 7: Departure' => 'Free time until your airport transfer, depending on your flight schedule. Departure from Ngurah Rai International Airport.',
-            ],
-            'images' => [
-                'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-                'https://images.unsplash.com/photo-1537996194471-e657df975ab4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-                'https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-                'https://images.unsplash.com/photo-1539367628448-4bc5c9d171c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-                'https://images.unsplash.com/photo-1535224206242-487f7090b5bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-            ],
-        ];
-        ?>
-
         <!-- Package Header -->
         <div class="package-header">
             <div class="container">
@@ -695,11 +699,11 @@ $role_id = $_SESSION['role_id'] ?? 1;
                 <div class="breadcrumb">
                     <a href="#">Travel Packages</a>
                     <span class="separator">›</span>
-                    <span class="current"><?php echo htmlspecialchars($packageData['name']); ?></span>
+                    <span class="current"><?php echo htmlspecialchars($package['name']); ?></span>
                 </div>
 
-                <h1 class="package-title"><?php echo htmlspecialchars($packageData['name']); ?></h1>
-                <p class="package-subtitle"><?php echo htmlspecialchars($packageData['subtitle']); ?></p>
+                <h1 class="package-title"><?php echo htmlspecialchars($package['name']); ?></h1>
+                <p class="package-subtitle"><?php echo htmlspecialchars($package['subtitle']); ?></p>
             </div>
         </div>
 
@@ -707,16 +711,16 @@ $role_id = $_SESSION['role_id'] ?? 1;
             <!-- Image Gallery -->
             <div class="gallery-container">
                 <img
-                    src="<?php echo htmlspecialchars($packageData['images'][0]); ?>"
-                    alt="<?php echo htmlspecialchars($packageData['name']); ?>"
+                    src="<?php echo htmlspecialchars($package['image_url']); ?>"
+                    alt="<?php echo htmlspecialchars($package['name']); ?>"
                     class="main-image"
                     id="mainImage"
                 >
                 <div class="thumbnail-container">
-                    <?php foreach ($packageData['images'] as $index => $image): ?>
+                    <?php foreach ($images as $index => $image): ?>
                         <img
                             src="<?php echo htmlspecialchars($image); ?>"
-                            alt="<?php echo htmlspecialchars($packageData['name']) . ' image ' . ($index + 1); ?>"
+                            alt="<?php echo htmlspecialchars($package['name']) . ' image ' . ($index + 1); ?>"
                             class="thumbnail <?php echo $index === 0 ? 'active' : ''; ?>"
                             onclick="changeImage('<?php echo htmlspecialchars($image); ?>', this)"
                         >
@@ -731,24 +735,24 @@ $role_id = $_SESSION['role_id'] ?? 1;
                     <!-- Overview Section -->
                     <div class="detail-section">
                         <h2 class="section-title">Overview</h2>
-                        <p><?php echo htmlspecialchars($packageData['description']); ?></p>
+                        <p><?php echo htmlspecialchars($package['description']); ?></p>
 
                         <div class="info-grid">
                             <div class="info-item">
                                 <div class="info-label">Duration</div>
-                                <div class="info-value"><?php echo htmlspecialchars($packageData['duration']); ?></div>
+                                <div class="info-value"><?php echo htmlspecialchars($package['duration']); ?></div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Group Size</div>
-                                <div class="info-value"><?php echo htmlspecialchars($packageData['group_size']); ?></div>
+                                <div class="info-value"><?php echo htmlspecialchars($package['group_size']); ?></div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Start Location</div>
-                                <div class="info-value"><?php echo htmlspecialchars($packageData['start_location']); ?></div>
+                                <div class="info-value"><?php echo htmlspecialchars($package['start_location']); ?></div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">End Location</div>
-                                <div class="info-value"><?php echo htmlspecialchars($packageData['end_location']); ?></div>
+                                <div class="info-value"><?php echo htmlspecialchars($package['end_location']); ?></div>
                             </div>
                         </div>
                     </div>
@@ -757,7 +761,7 @@ $role_id = $_SESSION['role_id'] ?? 1;
                     <div class="detail-section">
                         <h2 class="section-title">Trip Highlights</h2>
                         <ul class="highlights-list">
-                            <?php foreach ($packageData['highlights'] as $highlight): ?>
+                            <?php foreach ($highlights as $highlight): ?>
                                 <li><?php echo htmlspecialchars($highlight); ?></li>
                             <?php endforeach; ?>
                         </ul>
@@ -767,10 +771,10 @@ $role_id = $_SESSION['role_id'] ?? 1;
                     <div class="detail-section">
                         <h2 class="section-title">Detailed Itinerary</h2>
 
-                        <?php foreach ($packageData['itinerary'] as $day => $description): ?>
+                        <?php foreach ($itinerary as $item): ?>
                             <div class="itinerary-day">
-                                <h3 class="day-title"><?php echo htmlspecialchars($day); ?></h3>
-                                <p><?php echo htmlspecialchars($description); ?></p>
+                                <h3 class="day-title"><?php echo htmlspecialchars($item['day']); ?></h3>
+                                <p><?php echo htmlspecialchars($item['desc']); ?></p>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -779,7 +783,7 @@ $role_id = $_SESSION['role_id'] ?? 1;
                     <div class="detail-section">
                         <h2 class="section-title">What's Included</h2>
                         <ul class="highlights-list">
-                            <?php foreach ($packageData['includes'] as $item): ?>
+                            <?php foreach ($includes as $item): ?>
                                 <li><?php echo htmlspecialchars($item); ?></li>
                             <?php endforeach; ?>
                         </ul>
@@ -789,7 +793,7 @@ $role_id = $_SESSION['role_id'] ?? 1;
                     <div class="detail-section">
                         <h2 class="section-title">What's Not Included</h2>
                         <ul class="highlights-list">
-                            <?php foreach ($packageData['excludes'] as $item): ?>
+                            <?php foreach ($excludes as $item): ?>
                                 <li><?php echo htmlspecialchars($item); ?></li>
                             <?php endforeach; ?>
                         </ul>
@@ -798,7 +802,7 @@ $role_id = $_SESSION['role_id'] ?? 1;
 
                 <!-- Right Column - Booking Section -->
                 <div class="package-info-card">
-                    <div class="package-price-large">$<?php echo number_format($packageData['price']); ?></div>
+                    <div class="package-price-large">$<?php echo number_format($package['price']); ?></div>
                     <span class="price-per-person">per person</span>
 
                     <div class="package-actions">
@@ -844,7 +848,7 @@ $role_id = $_SESSION['role_id'] ?? 1;
                     <input
                         type="hidden"
                         name="package_id"
-                        value="<?php echo $packageData['id']; ?>"
+                        value="<?php echo $package['id']; ?>"
                     >
 
                     <div class="form-row">
