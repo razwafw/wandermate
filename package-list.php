@@ -2,6 +2,23 @@
 session_start();
 $loggedIn = isset($_SESSION['user_id']);
 $role_id = $_SESSION['role_id'] ?? 1;
+
+// Database connection
+$conn = new mysqli('localhost', 'root', '', 'wandermate');
+if ($conn->connect_error) {
+    die('Database connection failed: ' . $conn->connect_error);
+}
+
+// Fetch packages with their first image
+$packages = [];
+$sql = 'SELECT p.id, p.name, p.description, p.price, (SELECT url FROM images WHERE package_id = p.id LIMIT 1) AS image_url FROM packages p';
+$result = $conn->query($sql);
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $packages[] = $row;
+    }
+}
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -265,7 +282,9 @@ $role_id = $_SESSION['role_id'] ?? 1;
             border: none;
             cursor: pointer;
             position: absolute;
-            right: 15px;
+            width: fit-content;
+            height: fit-content;
+            right: 30px;
             color: #666;
         }
 
@@ -336,6 +355,12 @@ $role_id = $_SESSION['role_id'] ?? 1;
             }
         }
     </style>
+
+    <!-- Font Awesome -->
+    <script
+        src="https://kit.fontawesome.com/c880a1b0f6.js"
+        crossorigin="anonymous"
+    ></script>
 </head>
 <body>
     <!-- Header -->
@@ -407,149 +432,42 @@ $role_id = $_SESSION['role_id'] ?? 1;
                     class="search-input"
                     placeholder="Search for packages, destinations..."
                 />
-                <button class="search-btn">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        fill="currentColor"
-                        class="bi bi-search"
-                        viewBox="0 0 16 16"
-                    >
-                        <path
-                            fill-rule="evenodd"
-                            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.397l3.646 3.646a1 1 0 0 0 1.415-1.415l-3.646-3.646zm-5.53-.53a5.5 5.5 0 1 1 7.778 0 5.5 5.5 0 0 1-7.778 0z"
-                        />
-                    </svg>
+                <button
+                    class="search-btn"
+                    onclick="document.querySelector('.search-input').focus();"
+                >
+                    <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
             </div>
 
             <div class="packages-grid">
-                <!-- Package 1 -->
-                <div class="package-card">
-                    <div
-                        class="package-image"
-                        style="background-image: url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80');"
-                    ></div>
-                    <div class="package-content">
-                        <h3 class="package-name">Bali Paradise Retreat</h3>
-                        <p class="package-description">Experience the magic of Bali with our 7-day retreat package. Visit sacred temples, relax on pristine beaches, and immerse yourself in local culture.</p>
-                        <p class="package-price">From <span class="price-highlight">$1,299</span> per person</p>
-                        <div class="package-action">
-                            <a
-                                href="#"
-                                class="btn"
-                            >
-                                View Details
-                            </a>
+                <?php if (count($packages) > 0): ?>
+                    <?php foreach ($packages as $package): ?>
+                        <div class="package-card">
+                            <div
+                                class="package-image"
+                                style="background-image: url('<?php echo htmlspecialchars($package['image_url'] ?: 'bali.jpg'); ?>');"
+                            ></div>
+                            <div class="package-content">
+                                <h3 class="package-name"><?php echo htmlspecialchars($package['name']); ?></h3>
+                                <p class="package-description"><?php echo htmlspecialchars($package['description']); ?></p>
+                                <p class="package-price">From
+                                    <span class="price-highlight">$<?php echo number_format($package['price']); ?></span> per person
+                                </p>
+                                <div class="package-action">
+                                    <a
+                                        href="package-detail.php?id=<?php echo $package['id']; ?>"
+                                        class="btn"
+                                    >
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Package 2 -->
-                <div class="package-card">
-                    <div
-                        class="package-image"
-                        style="background-image: url('https://images.unsplash.com/photo-1467269204594-9661b134dd2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80');"
-                    ></div>
-                    <div class="package-content">
-                        <h3 class="package-name">Japanese Cultural Journey</h3>
-                        <p class="package-description">Explore the land of the rising sun in this 10-day journey through Tokyo, Kyoto, and Osaka. Experience traditional tea ceremonies and modern city life.</p>
-                        <p class="package-price">From <span class="price-highlight">$2,499</span> per person</p>
-                        <div class="package-action">
-                            <a
-                                href="#"
-                                class="btn"
-                            >
-                                View Details
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Package 3 -->
-                <div class="package-card">
-                    <div
-                        class="package-image"
-                        style="background-image: url('https://images.unsplash.com/photo-1528702748617-c64d49f918af?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80');"
-                    ></div>
-                    <div class="package-content">
-                        <h3 class="package-name">Greek Islands Cruise</h3>
-                        <p class="package-description">Set sail through the crystal-clear waters of the Aegean Sea. Visit Santorini, Mykonos, and hidden gems on this 8-day Mediterranean cruise adventure.</p>
-                        <p class="package-price">From <span class="price-highlight">$1,899</span> per person</p>
-                        <div class="package-action">
-                            <a
-                                href="#"
-                                class="btn"
-                            >
-                                View Details
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Package 4 -->
-                <div class="package-card">
-                    <div
-                        class="package-image"
-                        style="background-image: url('https://images.unsplash.com/photo-1505761671935-60b3a7427bad?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80');"
-                    ></div>
-                    <div class="package-content">
-                        <h3 class="package-name">New York City Break</h3>
-                        <p class="package-description">Experience the energy of the Big Apple with our 5-day city break. Broadway shows, iconic landmarks, and world-class dining await you.</p>
-                        <p class="package-price">From <span class="price-highlight">$1,099</span> per person</p>
-                        <div class="package-action">
-                            <a
-                                href="#"
-                                class="btn"
-                            >
-                                View Details
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Package 5 -->
-                <div class="package-card">
-                    <div
-                        class="package-image"
-                        style="background-image: url('https://images.unsplash.com/photo-1531572753322-ad063cecc140?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80');"
-                    ></div>
-                    <div class="package-content">
-                        <h3 class="package-name">Safari Adventure Kenya</h3>
-                        <p class="package-description">Witness the magnificent wildlife of Kenya on this 6-day safari. See the Big Five in their natural habitat and experience authentic African culture.</p>
-                        <p class="package-price">From <span class="price-highlight">$2,799</span> per person</p>
-                        <div class="package-action">
-                            <a
-                                href="#"
-                                class="btn"
-                            >
-                                View Details
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Package 6 -->
-                <div class="package-card">
-                    <div
-                        class="package-image"
-                        style="background-image: url('https://images.unsplash.com/photo-1527631746610-bca00a040d60?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80');"
-                    ></div>
-                    <div class="package-content">
-                        <h3 class="package-name">Thailand Beach Escape</h3>
-                        <p class="package-description">Relax on the stunning beaches of Phuket and Koh Samui. This 9-day package includes island hopping, spa treatments, and authentic Thai cuisine.</p>
-                        <p class="package-price">From <span class="price-highlight">$1,499</span> per person</p>
-                        <div class="package-action">
-                            <a
-                                href="#"
-                                class="btn"
-                            >
-                                View Details
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No packages found.</p>
+                <?php endif; ?>
             </div>
         </div>
     </main>
