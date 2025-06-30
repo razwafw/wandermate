@@ -39,6 +39,7 @@ CREATE TABLE `packages`
     `name`           VARCHAR(30)        NOT NULL,
     `subtitle`       VARCHAR(50),
     `price`          INT                NOT NULL,
+    `group_size`     INT                NOT NULL,
     `duration`       VARCHAR(20)        NOT NULL,
     `location`       VARCHAR(50)        NOT NULL,
     `start_location` VARCHAR(50)        NOT NULL,

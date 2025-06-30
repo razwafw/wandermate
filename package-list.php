@@ -11,7 +11,7 @@ if ($conn->connect_error) {
 
 // Fetch packages with their first image
 $packages = [];
-$sql = 'SELECT p.id, p.name, p.description, p.price, (SELECT url FROM images WHERE package_id = p.id LIMIT 1) AS image_url FROM packages p';
+$sql = 'SELECT p.id, p.name, p.description, p.price / p.group_size as price_per_person, (SELECT url FROM images WHERE package_id = p.id LIMIT 1) AS image_url FROM packages p';
 $result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
@@ -452,7 +452,7 @@ $conn->close();
                                 <h3 class="package-name"><?php echo htmlspecialchars($package['name']); ?></h3>
                                 <p class="package-description"><?php echo htmlspecialchars($package['description']); ?></p>
                                 <p class="package-price">From
-                                    <span class="price-highlight">$<?php echo number_format($package['price']); ?></span> per person
+                                    <span class="price-highlight">$<?php echo number_format($package['price_per_person']); ?></span> per person
                                 </p>
                                 <div class="package-action">
                                     <a

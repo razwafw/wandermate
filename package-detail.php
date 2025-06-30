@@ -13,7 +13,7 @@ if ($conn->connect_error) {
 }
 
 // Fetch package data
-$sql = 'SELECT p.*, (SELECT url FROM images WHERE package_id = p.id LIMIT 1) AS image_url FROM packages p WHERE  p.id = ?';
+$sql = 'SELECT p.*, p.price / p.group_size AS price_per_person, (SELECT url FROM images WHERE package_id = p.id LIMIT 1) AS image_url FROM packages p WHERE  p.id = ?';
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $packageId);
 $stmt->execute();
@@ -802,7 +802,7 @@ $itinerary = parseItinerary($package['itinerary']);
 
                 <!-- Right Column - Booking Section -->
                 <div class="package-info-card">
-                    <div class="package-price-large">$<?php echo number_format($package['price']); ?></div>
+                    <div class="package-price-large">$<?php echo number_format($package['price_per_person']); ?></div>
                     <span class="price-per-person">per person</span>
 
                     <div class="package-actions">
