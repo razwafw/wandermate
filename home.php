@@ -2,6 +2,36 @@
 session_start();
 $loggedIn = isset($_SESSION['user_id']);
 $role_id = $_SESSION['role_id'] ?? 1;
+
+// Fetch most popular packages from the database
+$host = 'localhost';
+$user = 'root';
+$pass = '';
+$db = 'wandermate';
+$conn = new mysqli($host, $user, $pass, $db);
+if ($conn->connect_error) {
+    die('Connection failed: ' . $conn->connect_error);
+}
+$popularPackages = [];
+$sql = "SELECT p.id, p.name, p.description, p.price / p.group_size as price_per_person, (SELECT url FROM images WHERE package_id = p.id LIMIT 1) AS image_url, COUNT(o.id) AS total_orders
+        FROM packages p
+        LEFT JOIN orders o ON o.package_id = p.id
+        GROUP BY p.id
+        ORDER BY total_orders DESC, price_per_person
+        LIMIT 3";
+$result = $conn->query($sql);
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        // Get first image for the package
+        $imgSql = "SELECT url FROM images WHERE package_id = " . $row['id'] . " LIMIT 1";
+        $imgResult = $conn->query($imgSql);
+        $row['image_url'] = ($imgResult && $imgResult->num_rows > 0)
+            ? $imgResult->fetch_assoc()['url']
+            : 'https://picsum.photos/600/400?random=' . $row['id'];
+        $popularPackages[] = $row;
+    }
+}
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -529,68 +559,26 @@ $role_id = $_SESSION['role_id'] ?? 1;
                     <p>Explore our most sought-after travel experiences and find your next dream destination.</p>
                 </div>
                 <div class="package-cards">
-                    <!-- Package 1 -->
-                    <div class="package-card">
-                        <div class="package-img">
-                            <img
-                                src="https://picsum.photos/600/400?<?php echo rand(1001, 2000); ?>"
-                                alt="Bali Paradise"
-                            >
+                    <?php foreach ($popularPackages as $pkg): ?>
+                        <div class="package-card">
+                            <div class="package-img">
+                                <img
+                                    src="<?php echo htmlspecialchars($pkg['image_url']); ?>"
+                                    alt="<?php echo htmlspecialchars($pkg['name']); ?>"
+                                >
+                            </div>
+                            <div class="package-info">
+                                <h3><?php echo htmlspecialchars($pkg['name']); ?></h3>
+                                <p><?php echo htmlspecialchars($pkg['subtitle'] ?? (strlen($pkg['description']) > 100 ? substr($pkg['description'], 0, 100) . '...' : $pkg['description'])); ?></p>
+                                <div class="price">From $<?php echo number_format($pkg['price_per_person']); ?> per person</div>
+                                <a
+                                    href="package-detail.php?id=<?php echo $pkg['id']; ?>"
+                                    class="btn"
+                                >View Details
+                                </a>
+                            </div>
                         </div>
-                        <div class="package-info">
-                            <h3>Bali Paradise</h3>
-                            <p>Experience the magic of Bali with our 7-day package including beachfront accommodations, cultural tours, and authentic cuisine experiences.</p>
-                            <div class="price">From $1,299</div>
-                            <a
-                                href="#"
-                                class="btn"
-                            >
-                                View Details
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Package 2 -->
-                    <div class="package-card">
-                        <div class="package-img">
-                            <img
-                                src="https://picsum.photos/600/400?<?php echo rand(2001, 3000); ?>"
-                                alt="European Dream"
-                            >
-                        </div>
-                        <div class="package-info">
-                            <h3>European Dream</h3>
-                            <p>Visit 5 iconic European cities in 12 days. Includes premium hotels, guided tours, and intercity travel. Perfect for history and culture enthusiasts.</p>
-                            <div class="price">From $2,499</div>
-                            <a
-                                href="#"
-                                class="btn"
-                            >
-                                View Details
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Package 3 -->
-                    <div class="package-card">
-                        <div class="package-img">
-                            <img
-                                src="https://picsum.photos/600/400?<?php echo rand(3001, 4000); ?>"
-                                alt="Japan Explorer"
-                            >
-                        </div>
-                        <div class="package-info">
-                            <h3>Japan Explorer</h3>
-                            <p>Discover the perfect blend of tradition and modernity with our 10-day Japan tour. Visit Tokyo, Kyoto, and Osaka with premium accommodations.</p>
-                            <div class="price">From $2,899</div>
-                            <a
-                                href="#"
-                                class="btn"
-                            >
-                                View Details
-                            </a>
-                        </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
                 <div style="text-align: center; margin: 0 auto;">
                     <a
