@@ -1,0 +1,17 @@
+---
+WanderMate Travel Itinerary
+Booking Reference: WM-1006-2025
+
+Day 1: Jakarta city tour
+- Pickup: 09:00, Hotel Jakarta Central
+- Tour: Monas, Kota Tua, National Museum
+- Ticket: City Tour Pass #JKT-2025-1006
+- Lunch: Café Batavia
+
+Day 2: Museum visit
+- Museum: Museum Nasional
+- Ticket: Museum Entry #MUS-2025-1006
+- Drop-off: 17:00, Hotel
+
+---
+Thank you for choosing WanderMate!

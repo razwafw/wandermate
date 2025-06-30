@@ -1,0 +1,23 @@
+---
+WanderMate Travel Itinerary
+Booking Reference: WM-1001-2025
+
+Day 1: Arrival in Bali
+- Flight: GA1234, Jakarta (CGK) to Bali (DPS), 08:00-11:00
+- Airport pickup: John Doe, +62 812-3456-7890
+- Hotel: Bali Beach Resort, Check-in: 14:00
+
+Day 2: Beach tour
+- Breakfast at hotel
+- Tour: Kuta Beach, Seminyak, Jimbaran
+- Lunch: Jimbaran Seafood
+- Ticket: Beach Tour Pass #BT-2025-1001
+
+Day 3: Ubud and Departure
+- Ubud Monkey Forest visit
+- Lunch: Bebek Bengil Ubud
+- Airport transfer: 16:00
+- Flight: GA1235, Bali (DPS) to Jakarta (CGK), 19:00-20:00
+
+---
+Thank you for choosing WanderMate!
