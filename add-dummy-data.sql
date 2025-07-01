@@ -5,8 +5,8 @@ VALUES (1, 'customer'),
 
 -- Dummy data for statuses
 INSERT INTO statuses (id, name)
-VALUES (1, 'rejected'),
-       (2, 'accepted');
+VALUES (1, 'cancelled'),
+       (2, 'confirmed');
 
 -- Dummy data for users
 INSERT INTO users (id, name, email, phone, password, role_id)
@@ -71,13 +71,13 @@ VALUES (1, 1001, 'bali.jpg'),
 -- Dummy data for orders
 INSERT INTO orders (id, booking_date, departure_date, amount, request, customer_id, package_id, status_id,
                     itinerary_url)
-VALUES (1, '10:00:00', '2025-07-01', 2, 'Vegetarian meal', 1, 1001, 2, 'itinerary-1001.txt'),
-       (2, '11:00:00', '2025-07-05', 1, NULL, 2, 1002, 1, NULL),
-       (3, '12:00:00', '2025-07-10', 3, 'Extra bed', 1, 1003, NULL, NULL),
-       (4, '13:00:00', '2025-07-15', 2, NULL, 2, 1004, 2, 'itinerary-1004.txt'),
-       (5, '14:00:00', '2025-07-20', 1, 'Window seat', 1, 1005, NULL, NULL),
-       (6, '15:00:00', '2025-07-25', 2, NULL, 2, 1006, 2, 'itinerary-1006.txt'),
-       (7, '16:00:00', '2025-07-30', 1, NULL, 1, 1007, 1, NULL),
-       (8, '17:00:00', '2025-08-01', 2, 'Late check-in', 2, 1008, NULL, NULL),
-       (9, '18:00:00', '2025-08-05', 1, NULL, 1, 1009, 2, 'itinerary-1009.txt'),
-       (10, '19:00:00', '2025-08-10', 3, 'Allergy info', 2, 1010, 1, NULL);
+VALUES (1, '2025-06-30 10:00:00', '2025-07-01 09:00:00', 2, 'Vegetarian meal', 1, 1001, 2, 'itinerary-1001.txt'),
+       (2, '2025-07-04 11:00:00', '2025-07-05 08:00:00', 1, NULL, 2, 1002, 1, NULL),
+       (3, '2025-07-09 12:00:00', '2025-07-10 10:00:00', 3, 'Extra bed', 1, 1003, NULL, NULL),
+       (4, '2025-07-14 13:00:00', '2025-07-15 07:00:00', 2, NULL, 2, 1004, 2, 'itinerary-1004.txt'),
+       (5, '2025-07-19 14:00:00', '2025-07-20 09:00:00', 1, 'Window seat', 1, 1005, NULL, NULL),
+       (6, '2025-07-24 15:00:00', '2025-07-25 08:00:00', 2, NULL, 2, 1006, 2, 'itinerary-1006.txt'),
+       (7, '2025-07-29 16:00:00', '2025-07-30 10:00:00', 1, NULL, 1, 1007, 1, NULL),
+       (8, '2025-07-31 17:00:00', '2025-08-01 09:00:00', 2, 'Late check-in', 2, 1008, NULL, NULL),
+       (9, '2025-08-04 18:00:00', '2025-08-05 08:00:00', 1, NULL, 1, 1009, 2, 'itinerary-1009.txt'),
+       (10, '2025-08-09 19:00:00', '2025-08-10 09:00:00', 3, 'Allergy info', 2, 1010, 1, NULL);

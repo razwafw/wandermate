@@ -532,18 +532,6 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
             border-radius: 5px;
         }
 
-        .search-container {
-            margin-bottom: 20px;
-        }
-
-        .search-input {
-            padding: 12px 15px;
-            width: 300px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -587,7 +575,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                     <li>
                         <a
                             href="dashboard.php"
-                            class="nav-link active"
+                            class="nav-link"
                         >
                             <span class="material-icons icon">dashboard</span>
                             <span>Dashboard</span>
@@ -619,7 +607,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                     <li>
                         <a
                             href="order-management.php"
-                            class="nav-link"
+                            class="nav-link active"
                         >
                             <span class="material-icons icon">shopping_cart</span>
                             <span>Orders</span>
@@ -665,105 +653,26 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                 </button>
             </div>
 
-            <div class="search-container">
-                <input
-                    type="text"
-                    class="search-input"
-                    placeholder="Search orders by ID, customer name, or package..."
-                >
-            </div>
-
             <!-- Orders Table -->
             <?php
-            // In a real application, this data would come from a database
-            // Here we're using sample data
-            $orders = [
-                [
-                    'id' => 1001,
-                    'customer_id' => 501,
-                    'customer_name' => 'John Doe',
-                    'package_id' => 1,
-                    'package_name' => 'Bali Paradise Retreat',
-                    'travelers' => 2,
-                    'departure_date' => '2025-07-15',
-                    'status' => 'confirmed',
-                    'booking_date' => '2025-06-01',
-                    'email' => 'john.doe@example.com',
-                    'phone' => '(555) 123-4567',
-                    'special_requests' => 'Vegetarian meals preferred',
-                    'total_price' => 2598.00,
-                    'itinerary_file' => 'itinerary-1001.txt',
-                ],
-                [
-                    'id' => 1002,
-                    'customer_id' => 502,
-                    'customer_name' => 'Jane Smith',
-                    'package_id' => 2,
-                    'package_name' => 'Japanese Cultural Journey',
-                    'travelers' => 1,
-                    'departure_date' => '2025-08-10',
-                    'status' => 'pending',
-                    'booking_date' => '2025-06-05',
-                    'email' => 'jane.smith@example.com',
-                    'phone' => '(555) 987-6543',
-                    'special_requests' => 'Early check-in if possible',
-                    'total_price' => 2499.00,
-                    'itinerary_file' => NULL,
-                ],
-                [
-                    'id' => 1003,
-                    'customer_id' => 503,
-                    'customer_name' => 'Robert Johnson',
-                    'package_id' => 3,
-                    'package_name' => 'Greek Islands Cruise',
-                    'travelers' => 4,
-                    'departure_date' => '2025-09-22',
-                    'status' => 'cancelled',
-                    'booking_date' => '2025-05-20',
-                    'email' => 'robert.johnson@example.com',
-                    'phone' => '(555) 456-7890',
-                    'special_requests' => 'Cabin with ocean view',
-                    'total_price' => 7596.00,
-                    'itinerary_file' => NULL,
-                ],
-                [
-                    'id' => 1004,
-                    'customer_id' => 504,
-                    'customer_name' => 'Sarah Williams',
-                    'package_id' => 4,
-                    'package_name' => 'African Safari Adventure',
-                    'travelers' => 2,
-                    'departure_date' => '2025-07-30',
-                    'status' => 'pending',
-                    'booking_date' => '2025-06-15',
-                    'email' => 'sarah.williams@example.com',
-                    'phone' => '(555) 234-5678',
-                    'special_requests' => 'Prefer window seats for flights',
-                    'total_price' => 5998.00,
-                    'itinerary_file' => NULL,
-                ],
-                [
-                    'id' => 1005,
-                    'customer_id' => 505,
-                    'customer_name' => 'Michael Brown',
-                    'package_id' => 5,
-                    'package_name' => 'New York City Explorer',
-                    'travelers' => 3,
-                    'departure_date' => '2025-08-05',
-                    'status' => 'confirmed',
-                    'booking_date' => '2025-05-25',
-                    'email' => 'michael.brown@example.com',
-                    'phone' => '(555) 876-5432',
-                    'special_requests' => 'Need airport transfer',
-                    'total_price' => 3747.00,
-                    'itinerary_file' => 'itinerary-1005.txt',
-                ],
-            ];
-
-            // Sort orders by departure date (most recent first)
-            usort($orders, function ($a, $b) {
-                return strtotime($b['departure_date']) - strtotime($a['departure_date']);
-            });
+            // Fetch orders from the database
+            $conn = new mysqli('localhost', 'root', '', 'wandermate');
+            if ($conn->connect_error) {
+                die('Connection failed: ' . $conn->connect_error);
+            }
+            $sql = "SELECT o.id, o.customer_id, u.name AS customer_name, u.email, u.phone, o.package_id, p.name AS package_name, o.amount AS travelers, o.departure_date, o.booking_date, s.name AS status, o.request AS special_requests, o.amount * p.price AS total_price, o.itinerary_url AS itinerary_file
+                    FROM orders o
+                    LEFT JOIN users u ON o.customer_id = u.id
+                    LEFT JOIN packages p ON o.package_id = p.id
+                    LEFT JOIN statuses s ON o.status_id = s.id
+                    ORDER BY o.booking_date";
+            $result = $conn->query($sql);
+            $orders = [];
+            if ($result && $result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $orders[] = $row;
+                }
+            }
             ?>
 
             <div class="orders-container">
@@ -780,7 +689,14 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                         </tr>
                     </thead>
                     <tbody id="orders-table-body">
-                        <?php foreach ($orders as $order): ?>
+                        <?php foreach ($orders as &$order): ?>
+                            <?php
+                            if ($order['status'] === NULL) {
+                                $order['status'] = 'pending';
+                            } else {
+                                $order['status'] = strtolower($order['status']);
+                            }
+                            ?>
                             <tr
                                 class="order-row"
                                 data-order-id="<?php echo $order['id']; ?>"
@@ -788,7 +704,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                                 data-order="<?php echo htmlspecialchars(json_encode($order)); ?>"
                             >
                                 <td><?php echo $order['id']; ?></td>
-                                <td><?php echo $order['customer_id']; ?> - <?php echo htmlspecialchars($order['customer_name']); ?></td>
+                                <td><?php echo htmlspecialchars($order['customer_name']); ?></td>
                                 <td><?php echo $order['package_id']; ?></td>
                                 <td><?php echo htmlspecialchars($order['package_name']); ?></td>
                                 <td><?php echo $order['travelers']; ?></td>
@@ -951,12 +867,6 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                 });
             });
 
-            // Set up search functionality
-            const searchInput = document.querySelector('.search-input');
-            searchInput.addEventListener('keyup', function () {
-                searchOrders(this.value.toLowerCase());
-            });
-
             // Set up confirm order button
             document.getElementById('confirmOrderBtn').addEventListener('click', function () {
                 confirmOrder();
@@ -1033,7 +943,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Total Price:</div>
-                    <div class="detail-value">$${order.total_price.toFixed(2)}</div>
+                    <div class="detail-value">$${parseInt(order.total_price).toFixed(2)}</div>
                 </div>`;
 
             if (order.special_requests) {
@@ -1164,38 +1074,6 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                 const status = row.getAttribute('data-status');
 
                 if (filter === 'all' || status === filter) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-
-            // Show/hide empty state message
-            document.getElementById('empty-state').style.display = visibleCount === 0 ? 'block' : 'none';
-        }
-
-        // Function to search orders
-        function searchOrders(query) {
-            const rows = document.querySelectorAll('.order-row');
-            let visibleCount = 0;
-
-            rows.forEach(row => {
-                const orderData = JSON.parse(row.getAttribute('data-order'));
-
-                // Check if the query matches any field we want to search by
-                const matchesSearch =
-                    orderData.id.toString().includes(query) ||
-                    orderData.customer_id.toString().includes(query) ||
-                    orderData.customer_name.toLowerCase().includes(query) ||
-                    orderData.package_id.toString().includes(query) ||
-                    orderData.package_name.toLowerCase().includes(query);
-
-                // Only show the row if it matches the search and current filter
-                const activeFilter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
-                const matchesFilter = activeFilter === 'all' || orderData.status === activeFilter;
-
-                if (matchesSearch && matchesFilter) {
                     row.style.display = '';
                     visibleCount++;
                 } else {

@@ -14,8 +14,8 @@ CREATE TABLE `statuses`
 CREATE TABLE `orders`
 (
     `id`             INT AUTO_INCREMENT NOT NULL,
-    `booking_date`   TIME               NOT NULL,
-    `departure_date` TIME               NOT NULL,
+    `booking_date`   DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `departure_date` DATETIME           NOT NULL,
     `amount`         INT                NOT NULL,
     `request`        VARCHAR(100),
     `customer_id`    INT,
