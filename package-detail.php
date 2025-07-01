@@ -851,51 +851,6 @@ $itinerary = parseItinerary($package['itinerary']);
                         value="<?php echo $package['id']; ?>"
                     >
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="firstName">First Name</label>
-                            <input
-                                type="text"
-                                id="firstName"
-                                name="firstName"
-                                class="form-control"
-                                required
-                            >
-                        </div>
-
-                        <div class="form-group">
-                            <label for="lastName">Last Name</label>
-                            <input
-                                type="text"
-                                id="lastName"
-                                name="lastName"
-                                class="form-control"
-                                required
-                            >
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            class="form-control"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input
-                            type="tel"
-                            id="phone"
-                            name="phone"
-                            class="form-control"
-                            required
-                        >
-                    </div>
 
                     <div class="form-group">
                         <label for="departureDate">Departure Date</label>
@@ -1002,12 +957,24 @@ $itinerary = parseItinerary($package['itinerary']);
             });
 
             // Handle form submission
-            bookingForm.addEventListener('submit', function (event) {
+            bookingForm.addEventListener('submit', async function (event) {
                 event.preventDefault();
 
-                // Here you would typically send the form data to a server
-                // For demonstration, we'll just show an alert
-                alert('Thank you for your booking! Your request has been received.');
+                const formData = new FormData(bookingForm);
+                try {
+                    const response = await fetch('add-order.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        alert(result.message);
+                    } else {
+                        alert(result.message || 'Failed to create order');
+                    }
+                } catch (e) {
+                    alert('Failed to create order');
+                }
 
                 // Close the modal
                 modal.style.display = 'none';
