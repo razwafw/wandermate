@@ -467,11 +467,11 @@ $conn->close();
                             </a>
                         </li>
                     <?php else: ?>
-                        <li>
-                            <a href="order-history.php">My Orders</a>
-                        </li>
-
-                        <?php if ($role_id === 2): ?>
+                        <?php if ($role_id === 1): ?>
+                            <li>
+                                <a href="order-history.php">My Orders</a>
+                            </li>
+                        <?php elseif ($role_id === 2): ?>
                             <li>
                                 <a href="dashboard.php">Dashboard</a>
                             </li>
@@ -494,16 +494,16 @@ $conn->close();
     <script>
         // Function to set scroll padding based on header height
         function setScrollPadding() {
-            const header = document.querySelector('header');
+            const header = document.querySelector("header");
             const headerHeight = header.offsetHeight;
-            document.documentElement.style.scrollPaddingTop = headerHeight + 'px';
+            document.documentElement.style.scrollPaddingTop = headerHeight + "px";
         }
 
         // Set initial scroll padding
-        window.addEventListener('DOMContentLoaded', setScrollPadding);
+        window.addEventListener("DOMContentLoaded", setScrollPadding);
 
         // Update scroll padding on window resize
-        window.addEventListener('resize', setScrollPadding);
+        window.addEventListener("resize", setScrollPadding);
     </script>
 
     <!-- Page Content -->

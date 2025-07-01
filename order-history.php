@@ -8,6 +8,12 @@ if (!$loggedIn) {
 }
 
 $role_id = $_SESSION['role_id'] ?? 1;
+
+if ($role_id !== 1) {
+    header("Location: home.php");
+    exit();
+}
+
 $user_id = $_SESSION['user_id'];
 
 // Database connection
@@ -567,11 +573,11 @@ $stmt->close();
                             </a>
                         </li>
                     <?php else: ?>
-                        <li>
-                            <a href="order-history.php">My Orders</a>
-                        </li>
-
-                        <?php if ($role_id === 2): ?>
+                        <?php if ($role_id === 1): ?>
+                            <li>
+                                <a href="order-history.php">My Orders</a>
+                            </li>
+                        <?php elseif ($role_id === 2): ?>
                             <li>
                                 <a href="dashboard.php">Dashboard</a>
                             </li>
@@ -594,16 +600,16 @@ $stmt->close();
     <script>
         // Function to set scroll padding based on header height
         function setScrollPadding() {
-            const header = document.querySelector('header');
+            const header = document.querySelector("header");
             const headerHeight = header.offsetHeight;
-            document.documentElement.style.scrollPaddingTop = headerHeight + 'px';
+            document.documentElement.style.scrollPaddingTop = headerHeight + "px";
         }
 
         // Set initial scroll padding
-        window.addEventListener('DOMContentLoaded', setScrollPadding);
+        window.addEventListener("DOMContentLoaded", setScrollPadding);
 
         // Update scroll padding on window resize
-        window.addEventListener('resize', setScrollPadding);
+        window.addEventListener("resize", setScrollPadding);
     </script>
 
     <!-- Page Content -->
@@ -794,16 +800,16 @@ $stmt->close();
         // Function to show order details in the modal
         function showOrderDetails(order) {
             // Set modal content
-            const formattedDate = new Date(order.departure_date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+            const formattedDate = new Date(order.departure_date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
             });
 
-            const bookingDate = new Date(order.booking_date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+            const bookingDate = new Date(order.booking_date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
             });
 
             const statusClass = `status-badge status-${order.status}`;
@@ -850,29 +856,29 @@ $stmt->close();
                 </div>`;
             }
 
-            document.getElementById('orderDetailsContent').innerHTML = content;
-            openModal('orderDetailsModal');
+            document.getElementById("orderDetailsContent").innerHTML = content;
+            openModal("orderDetailsModal");
         }
 
         // Function to open a modal
         function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            document.getElementById(modalId).style.display = "block";
+            document.body.style.overflow = "hidden"; // Prevent scrolling
         }
 
         // Function to close a modal
         function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-            document.body.style.overflow = 'auto'; // Enable scrolling
+            document.getElementById(modalId).style.display = "none";
+            document.body.style.overflow = "auto"; // Enable scrolling
         }
 
         // Function to view itinerary
         function viewItinerary(event, fileUrl) {
             event.stopPropagation();
             if (fileUrl) {
-                window.open(fileUrl, '_blank');
+                window.open(fileUrl, "_blank");
             } else {
-                alert('Itinerary file not found');
+                alert("Itinerary file not found");
             }
         }
 
@@ -885,27 +891,27 @@ $stmt->close();
             currentOrderId = orderId;
 
             // Update the confirm button to use the current order ID
-            document.getElementById('confirmCancelBtn').onclick = function () {
+            document.getElementById("confirmCancelBtn").onclick = function () {
                 cancelOrder(currentOrderId);
             };
 
             // Show the modal
-            openModal('cancellationModal');
+            openModal("cancellationModal");
         }
 
         // Function to cancel the order
         function cancelOrder(orderId) {
             if (!orderId) {
-                alert('Order ID is missing.');
+                alert("Order ID is missing.");
                 return;
             }
             // Send AJAX request to cancel-order.php
-            fetch('cancel-order.php', {
-                method: 'POST',
+            fetch("cancel-order.php", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    "Content-Type": "application/x-www-form-urlencoded",
                 },
-                body: 'order_id=' + encodeURIComponent(orderId)
+                body: "order_id=" + encodeURIComponent(orderId),
             })
                 .then(response => response.json())
                 .then(data => {
@@ -914,36 +920,36 @@ $stmt->close();
                         const row = document.querySelector(`tr[data-order-id="${orderId}"]`);
                         if (row) {
                             // Update the status badge
-                            const statusCell = row.querySelector('td:nth-child(4)');
-                            statusCell.innerHTML = '<span class="status-badge status-cancelled">Cancelled</span>';
+                            const statusCell = row.querySelector("td:nth-child(4)");
+                            statusCell.innerHTML = "<span class=\"status-badge status-cancelled\">Cancelled</span>";
                             // Remove the cancel button
-                            const cancelBtn = row.querySelector('.btn-cancel');
+                            const cancelBtn = row.querySelector(".btn-cancel");
                             if (cancelBtn) {
                                 cancelBtn.parentNode.removeChild(cancelBtn);
                             }
                         }
-                        closeModal('cancellationModal');
-                        alert('Your booking has been cancelled successfully.');
+                        closeModal("cancellationModal");
+                        alert("Your booking has been cancelled successfully.");
                     } else {
-                        alert(data.message || 'Failed to cancel booking.');
+                        alert(data.message || "Failed to cancel booking.");
                     }
                 })
                 .catch(() => {
-                    alert('An error occurred while cancelling the booking.');
+                    alert("An error occurred while cancelling the booking.");
                 });
         }
 
         // Close modals when clicking outside
-        window.addEventListener('click', function (event) {
-            const orderDetailsModal = document.getElementById('orderDetailsModal');
-            const cancellationModal = document.getElementById('cancellationModal');
+        window.addEventListener("click", function (event) {
+            const orderDetailsModal = document.getElementById("orderDetailsModal");
+            const cancellationModal = document.getElementById("cancellationModal");
 
             if (event.target === orderDetailsModal) {
-                closeModal('orderDetailsModal');
+                closeModal("orderDetailsModal");
             }
 
             if (event.target === cancellationModal) {
-                closeModal('cancellationModal');
+                closeModal("cancellationModal");
             }
         });
     </script>

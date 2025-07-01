@@ -666,11 +666,11 @@ $itinerary = parseItinerary($package['itinerary']);
                             </a>
                         </li>
                     <?php else: ?>
-                        <li>
-                            <a href="order-history.php">My Orders</a>
-                        </li>
-
-                        <?php if ($role_id === 2): ?>
+                        <?php if ($role_id === 1): ?>
+                            <li>
+                                <a href="order-history.php">My Orders</a>
+                            </li>
+                        <?php elseif ($role_id === 2): ?>
                             <li>
                                 <a href="dashboard.php">Dashboard</a>
                             </li>
@@ -911,82 +911,82 @@ $itinerary = parseItinerary($package['itinerary']);
         // Image Gallery Functionality
         function changeImage(src, thumbnail) {
             // Update main image source
-            document.getElementById('mainImage').src = src;
+            document.getElementById("mainImage").src = src;
 
             // Remove active class from all thumbnails
-            document.querySelectorAll('.thumbnail').forEach(thumb => {
-                thumb.classList.remove('active');
+            document.querySelectorAll(".thumbnail").forEach(thumb => {
+                thumb.classList.remove("active");
             });
 
             // Add active class to clicked thumbnail
-            thumbnail.classList.add('active');
+            thumbnail.classList.add("active");
         }
 
         // Modal Functionality
-        document.addEventListener('DOMContentLoaded', function () {
-            const modal = document.getElementById('bookingModal');
-            const bookNowBtn = document.getElementById('bookNowBtn');
-            const closeBtn = document.querySelector('.close');
-            const cancelBtn = document.getElementById('cancelBooking');
-            const bookingForm = document.getElementById('bookingForm');
+        document.addEventListener("DOMContentLoaded", function () {
+            const modal = document.getElementById("bookingModal");
+            const bookNowBtn = document.getElementById("bookNowBtn");
+            const closeBtn = document.querySelector(".close");
+            const cancelBtn = document.getElementById("cancelBooking");
+            const bookingForm = document.getElementById("bookingForm");
 
             // Open modal when Book Now is clicked
-            bookNowBtn.addEventListener('click', function () {
-                modal.style.display = 'block';
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            bookNowBtn.addEventListener("click", function () {
+                modal.style.display = "block";
+                document.body.style.overflow = "hidden"; // Prevent scrolling
             });
 
             // Close modal when X is clicked
-            closeBtn.addEventListener('click', function () {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto'; // Enable scrolling
+            closeBtn.addEventListener("click", function () {
+                modal.style.display = "none";
+                document.body.style.overflow = "auto"; // Enable scrolling
             });
 
             // Close modal when Cancel is clicked
-            cancelBtn.addEventListener('click', function () {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto'; // Enable scrolling
+            cancelBtn.addEventListener("click", function () {
+                modal.style.display = "none";
+                document.body.style.overflow = "auto"; // Enable scrolling
             });
 
             // Close modal when clicking outside content area
-            window.addEventListener('click', function (event) {
+            window.addEventListener("click", function (event) {
                 if (event.target === modal) {
-                    modal.style.display = 'none';
-                    document.body.style.overflow = 'auto'; // Enable scrolling
+                    modal.style.display = "none";
+                    document.body.style.overflow = "auto"; // Enable scrolling
                 }
             });
 
             // Handle form submission
-            bookingForm.addEventListener('submit', async function (event) {
+            bookingForm.addEventListener("submit", async function (event) {
                 event.preventDefault();
 
                 const formData = new FormData(bookingForm);
                 try {
-                    const response = await fetch('add-order.php', {
-                        method: 'POST',
-                        body: formData
+                    const response = await fetch("add-order.php", {
+                        method: "POST",
+                        body: formData,
                     });
                     const result = await response.json();
                     if (result.success) {
                         alert(result.message);
                     } else {
-                        alert(result.message || 'Failed to create order');
+                        alert(result.message || "Failed to create order");
                     }
                 } catch (e) {
-                    alert('Failed to create order');
+                    alert("Failed to create order");
                 }
 
                 // Close the modal
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto'; // Enable scrolling
+                modal.style.display = "none";
+                document.body.style.overflow = "auto"; // Enable scrolling
 
                 // Reset form
                 bookingForm.reset();
             });
 
             // Set min date for departure date input to today
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('departureDate').setAttribute('min', today);
+            const today = new Date().toISOString().split("T")[0];
+            document.getElementById("departureDate").setAttribute("min", today);
         });
     </script>
 
