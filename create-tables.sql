@@ -41,10 +41,8 @@ CREATE TABLE `packages`
     `price`          INT                NOT NULL,
     `group_size`     INT                NOT NULL,
     `duration`       VARCHAR(20)        NOT NULL,
-    `location`       VARCHAR(50)        NOT NULL,
     `start_location` VARCHAR(50)        NOT NULL,
     `end_location`   VARCHAR(50)        NOT NULL,
-    `accomodation`   VARCHAR(50),
     `description`    TEXT,
     `highlights`     TEXT,
     `includes`       TEXT,
@@ -98,4 +96,3 @@ ALTER TABLE `users`
     ADD CONSTRAINT `users_FK1` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
         ON DELETE RESTRICT
         ON UPDATE CASCADE;
-
