@@ -709,7 +709,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                                 <td><?php echo htmlspecialchars($order['package_name']); ?></td>
                                 <td><?php echo $order['travelers']; ?></td>
                                 <td>
-                                    <span class="status-badge status-<?php echo $order['status']; ?>">
+                                    <span class="order-status status-badge status-<?php echo $order['status']; ?>">
                                         <?php echo ucfirst($order['status']); ?>
                                     </span>
                                 </td>
@@ -838,53 +838,53 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
         let currentOrderId = null;
 
         // Initialize event listeners once the DOM is loaded
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener("DOMContentLoaded", function () {
             // Add click event to all order rows
-            const orderRows = document.querySelectorAll('.order-row');
+            const orderRows = document.querySelectorAll(".order-row");
             orderRows.forEach(row => {
-                row.addEventListener('click', function (e) {
+                row.addEventListener("click", function (e) {
                     // Ignore clicks on action buttons
-                    if (!e.target.closest('.action-buttons')) {
-                        const orderData = JSON.parse(this.getAttribute('data-order'));
+                    if (!e.target.closest(".action-buttons")) {
+                        const orderData = JSON.parse(this.getAttribute("data-order"));
                         showOrderDetails(orderData);
                     }
                 });
             });
 
             // Set up filter buttons
-            const filterButtons = document.querySelectorAll('.filter-btn');
+            const filterButtons = document.querySelectorAll(".filter-btn");
             filterButtons.forEach(button => {
-                button.addEventListener('click', function () {
+                button.addEventListener("click", function () {
                     // Remove active class from all buttons
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    filterButtons.forEach(btn => btn.classList.remove("active"));
 
                     // Add active class to clicked button
-                    this.classList.add('active');
+                    this.classList.add("active");
 
                     // Apply filter
-                    const filter = this.getAttribute('data-filter');
+                    const filter = this.getAttribute("data-filter");
                     filterOrders(filter);
                 });
             });
 
             // Set up confirm order button
-            document.getElementById('confirmOrderBtn').addEventListener('click', function () {
+            document.getElementById("confirmOrderBtn").addEventListener("click", function () {
                 confirmOrder();
             });
         });
 
         // Function to show order details in the modal
         function showOrderDetails(order) {
-            const formattedDate = new Date(order.departure_date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+            const formattedDate = new Date(order.departure_date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
             });
 
-            const bookingDate = new Date(order.booking_date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+            const bookingDate = new Date(order.booking_date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
             });
 
             const statusClass = `status-badge status-${order.status}`;
@@ -954,7 +954,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                 </div>`;
             }
 
-            if (order.status === 'confirmed' && order.itinerary_file) {
+            if (order.status === "confirmed" && order.itinerary_file) {
                 content += `
                 <div class="modal-divider"></div>
 
@@ -969,8 +969,8 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                 </div>`;
             }
 
-            document.getElementById('orderDetailsContent').innerHTML = content;
-            openModal('orderDetailsModal');
+            document.getElementById("orderDetailsContent").innerHTML = content;
+            openModal("orderDetailsModal");
         }
 
         // Function to open the confirm order modal
@@ -994,62 +994,78 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Departure:</div>
-                    <div class="detail-value">${new Date(order.departure_date).toLocaleDateString('en-US', {
-                year: 'numeric', month: 'long', day: 'numeric'
+                    <div class="detail-value">${new Date(order.departure_date).toLocaleDateString("en-US", {
+                year: "numeric", month: "long", day: "numeric",
             })}</div>
                 </div>
             `;
 
-            document.getElementById('confirmOrderSummary').innerHTML = summary;
-            openModal('confirmOrderModal');
+            document.getElementById("confirmOrderSummary").innerHTML = summary;
+            openModal("confirmOrderModal");
         }
 
-        // Function to confirm an order
+        // Function to confirm order
         function confirmOrder() {
-            // Get the file input
-            const fileInput = document.getElementById('itineraryFile');
-
-            // Check if a file was selected
-            if (!fileInput.files || fileInput.files.length === 0) {
-                alert('Please select an itinerary file to upload');
+            if (!currentOrderId) {
+                alert("Order ID is missing.");
                 return;
             }
-
-            // In a real application, you would upload the file to the server here
-            // For this demo, we'll just simulate a successful upload
-
-            // Find the order row
-            const row = document.querySelector(`tr[data-order-id="${currentOrderId}"]`);
-            if (row) {
-                // Update the status in the table
-                const statusCell = row.querySelector('td:nth-child(6)');
-                statusCell.innerHTML = '<span class="status-badge status-confirmed">Confirmed</span>';
-
-                // Update the actions cell
-                const actionsCell = row.querySelector('td:nth-child(7)');
-                const fileName = `itinerary-${currentOrderId}.txt`; // In a real app, this would be the actual uploaded file name
-                actionsCell.innerHTML = `
-                    <div class="action-buttons">
-                        <button class="action-btn btn-confirm" onclick="viewItinerary(event, '${fileName}', ${currentOrderId})">
-                            <span class="material-icons">description</span>
-                            View Itinerary
-                        </button>
-                    </div>
-                `;
-
-                // Update the data attribute
-                const orderData = JSON.parse(row.getAttribute('data-order'));
-                orderData.status = 'confirmed';
-                orderData.itinerary_file = fileName;
-                row.setAttribute('data-order', JSON.stringify(orderData));
-                row.setAttribute('data-status', 'confirmed');
-
-                // Close the modal
-                closeModal('confirmOrderModal');
-
-                // Show success message
-                alert('Order has been confirmed successfully');
+            // Read the file content from the file input
+            const fileInput = document.getElementById("itineraryFile");
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("Please select an itinerary file.");
+                return;
             }
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const itineraryContent = e.target.result;
+                // Send AJAX request to confirm-order.php
+                fetch("confirm-order.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: "order_id=" + encodeURIComponent(currentOrderId) + "&itinerary_content=" + encodeURIComponent(itineraryContent),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update the row UI
+                            const row = document.querySelector(`tr[data-order-id="${currentOrderId}"]`);
+                            console.log(row);
+                            if (row) {
+                                const orderStatus = row.querySelector(".order-status");
+                                orderStatus.textContent = "Confirmed";
+                                orderStatus.classList.remove("status-pending");
+                                orderStatus.classList.add("status-confirmed");
+
+                                row.setAttribute("data-status", "confirmed");
+                                // Update action button to View Itinerary
+                                const actionCell = row.querySelector(".action-buttons");
+                                if (actionCell) {
+                                    actionCell.innerHTML = `<button class=\"action-btn btn-confirm\" onclick=\"viewItinerary(event, '${data.itinerary_url}', ${currentOrderId})\"><span class=\"material-icons\">description</span>View Itinerary</button>`;
+                                }
+                                // Update data-order attribute
+                                const orderData = JSON.parse(row.getAttribute("data-order"));
+                                orderData.status = "confirmed";
+                                orderData.itinerary_file = data.itinerary_url;
+                                row.setAttribute("data-order", JSON.stringify(orderData));
+                            }
+                            closeModal("confirmOrderModal");
+                            alert("Order has been confirmed successfully");
+                        } else {
+                            alert(data.message || "Failed to confirm order.");
+                        }
+                    })
+                    .catch(() => {
+                        alert("An error occurred while confirming the order.");
+                    });
+            };
+            reader.onerror = function () {
+                alert("Failed to read the itinerary file.");
+            };
+            reader.readAsText(file);
         }
 
         // Function to view itinerary
@@ -1059,52 +1075,52 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
             // In a real application, this would open the file or download it
             // For this demo, we'll just show a message
             if (fileName) {
-                window.open(fileName, '_blank');
+                window.open(fileName, "_blank");
             } else {
-                alert('Itinerary file not found');
+                alert("Itinerary file not found");
             }
         }
 
         // Function to filter orders by status
         function filterOrders(filter) {
-            const rows = document.querySelectorAll('.order-row');
+            const rows = document.querySelectorAll(".order-row");
             let visibleCount = 0;
 
             rows.forEach(row => {
-                const status = row.getAttribute('data-status');
+                const status = row.getAttribute("data-status");
 
-                if (filter === 'all' || status === filter) {
-                    row.style.display = '';
+                if (filter === "all" || status === filter) {
+                    row.style.display = "";
                     visibleCount++;
                 } else {
-                    row.style.display = 'none';
+                    row.style.display = "none";
                 }
             });
 
             // Show/hide empty state message
-            document.getElementById('empty-state').style.display = visibleCount === 0 ? 'block' : 'none';
+            document.getElementById("empty-state").style.display = visibleCount === 0 ? "block" : "none";
         }
 
         // Function to open a modal
         function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            document.getElementById(modalId).style.display = "block";
+            document.body.style.overflow = "hidden"; // Prevent scrolling
         }
 
         // Function to close a modal
         function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-            document.body.style.overflow = 'auto'; // Enable scrolling
+            document.getElementById(modalId).style.display = "none";
+            document.body.style.overflow = "auto"; // Enable scrolling
 
             // Clear file input when closing confirm order modal
-            if (modalId === 'confirmOrderModal') {
-                document.getElementById('itineraryFile').value = '';
+            if (modalId === "confirmOrderModal") {
+                document.getElementById("itineraryFile").value = "";
             }
         }
 
         // Close modals when clicking outside
-        window.addEventListener('click', function (event) {
-            const modals = document.querySelectorAll('.modal');
+        window.addEventListener("click", function (event) {
+            const modals = document.querySelectorAll(".modal");
             modals.forEach(modal => {
                 if (event.target === modal) {
                     closeModal(modal.id);
