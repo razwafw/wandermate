@@ -4,6 +4,15 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
     header('Location: home.php');
     exit();
 }
+// Database connection
+$host = 'localhost';
+$user = 'root';
+$pass = '';
+$db = 'wandermate';
+$conn = new mysqli($host, $user, $pass, $db);
+if ($conn->connect_error) {
+    die('Database connection failed: ' . $conn->connect_error);
+}
 ?>
 
 <!DOCTYPE html>
@@ -660,95 +669,51 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
             </div>
 
             <?php
-            // Demo data - in a real application, this would come from a database
-            $packages = [
-                [
-                    'id' => 1,
-                    'name' => 'Bali Paradise Retreat',
-                    'subtitle' => '7-day retreat package to experience the magic of Bali',
-                    'price' => 1299,
-                    'duration' => '7 days / 6 nights',
-                    'group_size' => '2-16 people',
-                    'location' => 'Bali, Indonesia',
-                    'start_location' => 'Ngurah Rai International Airport, Denpasar',
-                    'end_location' => 'Ngurah Rai International Airport, Denpasar',
-                    'accommodation' => '4-star hotels and luxury villas',
-                    'description' => 'Experience the magic of Bali with our 7-day retreat package. This carefully crafted journey takes you through the cultural heart of the island, with visits to sacred temples, relaxing days on pristine beaches, and immersive experiences in local village life.',
-                    'highlights' => [
-                        'Guided tour of ancient temples including Tanah Lot and Uluwatu',
-                        'Relaxing spa day with traditional Balinese treatments',
-                        'Cooking class to learn authentic Indonesian cuisine',
-                        'Sunrise trek to Mount Batur volcano',
-                        'Snorkeling at the vibrant coral gardens of Nusa Penida',
-                    ],
-                    'includes' => [
-                        'Airport transfers',
-                        'All accommodations',
-                        'Daily breakfast, 4 lunches, and 3 dinners',
-                        'English-speaking local guide',
-                        'All activities and entrance fees mentioned in the itinerary',
-                    ],
-                    'excludes' => [
-                        'International flights',
-                        'Travel insurance',
-                        'Meals not mentioned in the itinerary',
-                        'Personal expenses and souvenirs',
-                        'Optional activities not in the itinerary',
-                    ],
-                    'itinerary' => [
-                        'Day 1: Arrival in Bali & Welcome Dinner' => 'Arrive at Ngurah Rai International Airport where you\'ll be greeted by your guide. Transfer to your hotel in Seminyak for check-in and relaxation.',
-                        'Day 2: Sacred Temples & Ubud Transfer' => 'After breakfast, visit the iconic sea temple of Tanah Lot. Continue to Mengwi to explore the royal temple of Taman Ayun.',
-                        'Day 3: Ubud Cultural Immersion' => 'Morning visit to Ubud Monkey Forest and the Royal Palace. Participate in a traditional Balinese cooking class where you\'ll learn to prepare local dishes.',
-                    ],
-                    'images' => [
-                        'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-                        'https://images.unsplash.com/photo-1537996194471-e657df975ab4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-                    ],
-                ],
-                [
-                    'id' => 2,
-                    'name' => 'Japanese Cultural Journey',
-                    'subtitle' => '10-day exploration of Japan\'s traditions and landscapes',
-                    'price' => 2499,
-                    'duration' => '10 days / 9 nights',
-                    'group_size' => '4-12 people',
-                    'location' => 'Japan',
-                    'start_location' => 'Tokyo Narita International Airport',
-                    'end_location' => 'Osaka Kansai International Airport',
-                    'accommodation' => 'Mix of traditional ryokans and modern hotels',
-                    'description' => 'Immerse yourself in the culture, history, and natural beauty of Japan with our comprehensive 10-day tour. From the bustling streets of Tokyo to the serene temples of Kyoto.',
-                    'highlights' => [
-                        'Guided tour of Tokyo\'s historic districts and modern neighborhoods',
-                        'Traditional tea ceremony experience in Kyoto',
-                        'Visit to the iconic Mt. Fuji and surrounding lakes',
-                        'Stay in a traditional ryokan with onsen hot springs',
-                        'Bullet train journey through Japan\'s scenic countryside',
-                    ],
-                    'includes' => [
-                        'Airport transfers',
-                        'All accommodations',
-                        'Daily breakfast, 6 lunches, and 5 dinners',
-                        'English-speaking local guide',
-                        'All transportation including bullet train',
-                    ],
-                    'excludes' => [
-                        'International flights',
-                        'Travel insurance',
-                        'Meals not mentioned in the itinerary',
-                        'Personal expenses and souvenirs',
-                        'Optional activities not in the itinerary',
-                    ],
-                    'itinerary' => [
-                        'Day 1: Arrival in Tokyo' => 'Arrive at Tokyo Narita Airport and transfer to your hotel. Welcome dinner at a local izakaya.',
-                        'Day 2: Tokyo Exploration' => 'Visit Tsukiji Outer Market, the Imperial Palace Gardens, and Asakusa district with the ancient Senso-ji Temple.',
-                        'Day 3: Mt. Fuji Day Trip' => 'Full-day excursion to Mt. Fuji and Hakone, including a lake cruise and cable car ride for panoramic mountain views.',
-                    ],
-                    'images' => [
-                        'https://images.unsplash.com/photo-1528360983277-13d401cdc186?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-                        'https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-                    ],
-                ],
-            ];
+            // Parse highlights, includes, excludes, itinerary
+            function parseNewlineList($str)
+            {
+                return array_filter(array_map('trim', explode("\n", $str)));
+            }
+
+            function parseItinerary($str)
+            {
+                $result = [];
+                foreach (parseNewlineList($str) as $line) {
+                    $parts = explode('|', $line, 2);
+                    $day = isset($parts[0]) ? trim($parts[0]) : '';
+                    $desc = isset($parts[1]) ? trim($parts[1]) : '';
+                    if ($day !== '' && $desc !== '') {
+                        $result[$day] = $desc;
+                    }
+                }
+                return $result;
+            }
+
+            // Fetch packages from database
+            $packages = [];
+            $sql = "SELECT * FROM packages";
+            $result = $conn->query($sql);
+            if ($result && $result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $packageId = $row['id'];
+                    // Fetch images for this package
+                    $imgSql = "SELECT url FROM images WHERE package_id = $packageId";
+                    $imgResult = $conn->query($imgSql);
+                    $images = [];
+                    if ($imgResult && $imgResult->num_rows > 0) {
+                        while ($imgRow = $imgResult->fetch_assoc()) {
+                            $images[] = $imgRow['url'];
+                        }
+                    }
+                    $row['images'] = $images;
+
+                    $row['highlights'] = parseNewlineList($row['highlights']);
+                    $row['includes'] = parseNewlineList($row['includes']);
+                    $row['excludes'] = parseNewlineList($row['excludes']);
+                    $row['itinerary'] = parseItinerary($row['itinerary']);
+                    $packages[] = $row;
+                }
+            }
             ?>
 
             <!-- Package Table -->
@@ -818,7 +783,12 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                         >&times;</span>
                     </div>
 
-                    <form id="packageForm">
+                    <form
+                        id="packageForm"
+                        enctype="multipart/form-data"
+                        method="post"
+                        action="add-package.php"
+                    >
                         <input
                             type="hidden"
                             id="package_id"
@@ -875,23 +845,13 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="location">Location</label>
-                                <input
-                                    type="text"
-                                    id="location"
-                                    name="location"
-                                    class="form-control"
-                                    required
-                                >
-                            </div>
-                            <div class="form-group">
                                 <label for="group_size">Group Size</label>
                                 <input
-                                    type="text"
+                                    type="number"
                                     id="group_size"
                                     name="group_size"
-                                    placeholder="e.g. 2-16 people"
                                     class="form-control"
+                                    min="1"
                                     required
                                 >
                             </div>
@@ -918,17 +878,6 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                                     required
                                 >
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="accommodation">Accommodation</label>
-                            <input
-                                type="text"
-                                id="accommodation"
-                                name="accommodation"
-                                class="form-control"
-                                required
-                            >
                         </div>
 
                         <div class="form-group">
@@ -1085,12 +1034,6 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
                 openCreatePackageModal();
             });
 
-            // Package Form Submit Event Listener
-            document.getElementById('packageForm').addEventListener('submit', function (e) {
-                e.preventDefault();
-                savePackage();
-            });
-
             // Initialize image preview for file uploads
             document.getElementById('package_images').addEventListener('change', handleImageUpload);
         });
@@ -1120,11 +1063,9 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
             document.getElementById('subtitle').value = package.subtitle;
             document.getElementById('price').value = package.price;
             document.getElementById('duration').value = package.duration;
-            document.getElementById('location').value = package.location;
             document.getElementById('group_size').value = package.group_size;
             document.getElementById('start_location').value = package.start_location;
             document.getElementById('end_location').value = package.end_location;
-            document.getElementById('accommodation').value = package.accommodation;
             document.getElementById('description').value = package.description;
 
             // Handle array fields by joining with newlines
@@ -1262,22 +1203,6 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
 
             // Update preview
             handleImageUpload({target: fileInput});
-        }
-
-        // Function to save package (create or update)
-        function savePackage() {
-            // In a real application, this would send data to a server using FormData
-            // For this demo, we'll just show a success message
-            const packageId = document.getElementById('package_id').value;
-            const isNew = packageId === '';
-
-            // In a real application, you would use FormData to handle file uploads
-            // const formData = new FormData(document.getElementById('packageForm'));
-
-            alert(`Package ${isNew ? 'created' : 'updated'} successfully!`);
-            closeModal('packageModal');
-
-            // In a real application, you would refresh the data or update the table
         }
 
         // Function to show delete confirmation dialog
