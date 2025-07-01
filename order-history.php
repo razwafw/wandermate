@@ -529,11 +529,11 @@ $role_id = $_SESSION['role_id'] ?? 1;
                             </a>
                         </li>
                     <?php else: ?>
-                        <?php if ($role_id === 1): ?>
-                            <li>
-                                <a href="order-history.php">My Orders</a>
-                            </li>
-                        <?php elseif ($role_id === 2): ?>
+                        <li>
+                            <a href="order-history.php">My Orders</a>
+                        </li>
+
+                        <?php if ($role_id === 2): ?>
                             <li>
                                 <a href="dashboard.php">Dashboard</a>
                             </li>
