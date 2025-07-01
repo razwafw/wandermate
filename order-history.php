@@ -1,7 +1,45 @@
 <?php
 session_start();
 $loggedIn = isset($_SESSION['user_id']);
+
+if (!$loggedIn) {
+    header("Location: login.php");
+    exit();
+}
+
 $role_id = $_SESSION['role_id'] ?? 1;
+$user_id = $_SESSION['user_id'];
+
+// Database connection
+$host = 'localhost';
+$user = 'root';
+$pass = '';
+$db = 'wandermate';
+$conn = new mysqli($host, $user, $pass, $db);
+if ($conn->connect_error) {
+    die('Database connection failed: ' . $conn->connect_error);
+}
+
+// Fetch orders for the logged-in user
+$sql = "SELECT o.id, o.booking_date, o.departure_date, o.amount, o.request, o.package_id, o.status_id, o.itinerary_url, 
+               p.name AS package_name, p.price AS package_price, p.group_size, s.name AS status_name
+        FROM orders o
+        JOIN packages p ON o.package_id = p.id
+        LEFT JOIN statuses s ON o.status_id = s.id
+        WHERE o.customer_id = ?
+        ORDER BY o.departure_date DESC";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$orders = [];
+while ($row = $result->fetch_assoc()) {
+    $orders[] = $row;
+}
+$stmt->close();
+
+// Optionally, close the DB connection at the end of the script
+// $conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -580,61 +618,7 @@ $role_id = $_SESSION['role_id'] ?? 1;
 
         <div class="container">
             <?php
-            // In a real application, this data would come from a database
-            // Here we're using sample data
-            $orders = [
-                [
-                    'id' => 1001,
-                    'package_name' => 'Bali Paradise Retreat',
-                    'package_id' => 1,
-                    'travelers' => 2,
-                    'departure_date' => '2025-07-15',
-                    'status' => 'confirmed',
-                    'booking_date' => '2025-06-01',
-                    'first_name' => 'John',
-                    'last_name' => 'Doe',
-                    'email' => 'john.doe@example.com',
-                    'phone' => '(555) 123-4567',
-                    'special_requests' => 'Vegetarian meals preferred',
-                    'total_price' => 2598.00,
-                ],
-                [
-                    'id' => 1002,
-                    'package_name' => 'Japanese Cultural Journey',
-                    'package_id' => 2,
-                    'travelers' => 1,
-                    'departure_date' => '2025-08-10',
-                    'status' => 'pending',
-                    'booking_date' => '2025-06-05',
-                    'first_name' => 'John',
-                    'last_name' => 'Doe',
-                    'email' => 'john.doe@example.com',
-                    'phone' => '(555) 123-4567',
-                    'special_requests' => 'Early check-in if possible',
-                    'total_price' => 2499.00,
-                ],
-                [
-                    'id' => 1003,
-                    'package_name' => 'Greek Islands Cruise',
-                    'package_id' => 3,
-                    'travelers' => 4,
-                    'departure_date' => '2025-09-22',
-                    'status' => 'cancelled',
-                    'booking_date' => '2025-05-20',
-                    'first_name' => 'John',
-                    'last_name' => 'Doe',
-                    'email' => 'john.doe@example.com',
-                    'phone' => '(555) 123-4567',
-                    'special_requests' => 'Cabin with ocean view',
-                    'total_price' => 7596.00,
-                ],
-            ];
-
-            // Sort orders by departure date (most recent first)
-            usort($orders, function ($a, $b) {
-                return strtotime($b['departure_date']) - strtotime($a['departure_date']);
-            });
-
+            // Remove sample data and use fetched $orders from database
             if (count($orders) > 0):
                 ?>
                 <div class="orders-container">
@@ -642,7 +626,7 @@ $role_id = $_SESSION['role_id'] ?? 1;
                         <thead>
                             <tr>
                                 <th>Package</th>
-                                <th>Travelers</th>
+                                <th>Amount</th>
                                 <th>Departure Date</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -652,52 +636,41 @@ $role_id = $_SESSION['role_id'] ?? 1;
                             <?php foreach ($orders as $order): ?>
                                 <tr
                                     data-order-id="<?php echo $order['id']; ?>"
-                                    onclick="showOrderDetails(<?php echo htmlspecialchars(json_encode($order)); ?>)"
+                                    onclick='showOrderDetails(<?php echo json_encode([
+                                        "id" => $order["id"],
+                                        "package_name" => $order["package_name"],
+                                        "travelers" => $order["amount"],
+                                        "departure_date" => $order["departure_date"],
+                                        "status" => $order["status_name"] ?? "pending",
+                                        "booking_date" => $order["booking_date"],
+                                        "request" => $order["request"],
+                                        "total_price" => $order["package_price"],
+                                    ]); ?>)'
                                 >
                                     <td><?php echo htmlspecialchars($order['package_name']); ?></td>
-                                    <td><?php echo $order['travelers']; ?></td>
+                                    <td><?php echo $order['amount']; ?></td>
                                     <td><?php echo date('F j, Y', strtotime($order['departure_date'])); ?></td>
                                     <td>
-                                    <span class="status-badge status-<?php echo $order['status']; ?>">
-                                        <?php echo ucfirst($order['status']); ?>
+                                    <span class="status-badge status-<?php echo strtolower($order['status_name'] ?? 'Pending'); ?>">
+                                        <?php echo ucfirst($order['status_name'] ?? 'Pending'); ?>
                                     </span>
                                     </td>
                                     <td>
                                         <div class="action-buttons">
-                                            <?php if ($order['status'] === 'confirmed'): ?>
+                                            <?php if (strtolower($order['status_name']) === 'confirmed'): ?>
                                                 <button
                                                     class="action-btn btn-download"
-                                                    onclick="downloadItinerary(event, <?php echo $order['id']; ?>)"
-                                                    aria-label="Download itinerary"
+                                                    onclick="viewItinerary(event, '<?php echo htmlspecialchars($order['itinerary_url']); ?>')"
+                                                    aria-label="View itinerary"
                                                 >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        width="16"
-                                                        height="16"
-                                                        fill="currentColor"
-                                                        viewBox="0 0 16 16"
-                                                    >
-                                                        <path d="M8 0a1 1 0 0 1 1 1v6h1.5a.5.5 0 0 1 .4.8l-3 4a.5.5 0 0 1-.8 0l-3-4a.5.5 0 0 1 .4-.8H6V1a1 1 0 0 1 1-1z" />
-                                                        <path d="M1.5 14.5A1.5 1.5 0 0 0 3 16h10a1.5 1.5 0 0 0 1.5-1.5V9.05a2.5 2.5 0 0 1-.5.05H13v5.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V9.1c-.18.01-.36.01-.5 0v5.4z" />
-                                                    </svg>
-                                                    Download
+                                                    View Itinerary
                                                 </button>
-                                            <?php elseif ($order['status'] !== 'cancelled'): ?>
+                                            <?php elseif (strtolower($order['status_name']) !== 'cancelled'): ?>
                                                 <button
                                                     class="action-btn btn-cancel"
                                                     onclick="confirmCancellation(event, <?php echo $order['id']; ?>)"
                                                     aria-label="Cancel booking"
                                                 >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        width="16"
-                                                        height="16"
-                                                        fill="currentColor"
-                                                        viewBox="0 0 16 16"
-                                                    >
-                                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                                    </svg>
                                                     Cancel
                                                 </button>
                                             <?php endif; ?>
@@ -857,21 +830,6 @@ $role_id = $_SESSION['role_id'] ?? 1;
                 <div class="modal-divider"></div>
 
                 <div class="detail-row">
-                    <div class="detail-label">Traveler Name:</div>
-                    <div class="detail-value">${order.first_name} ${order.last_name}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Email:</div>
-                    <div class="detail-value">${order.email}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Phone:</div>
-                    <div class="detail-value">${order.phone}</div>
-                </div>
-
-                <div class="modal-divider"></div>
-
-                <div class="detail-row">
                     <div class="detail-label">Departure Date:</div>
                     <div class="detail-value">${formattedDate}</div>
                 </div>
@@ -881,7 +839,7 @@ $role_id = $_SESSION['role_id'] ?? 1;
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Total Price:</div>
-                    <div class="detail-value">$${order.total_price.toFixed(2)}</div>
+                    <div class="detail-value">$${parseInt(order.total_price).toFixed(2)}</div>
                 </div>`;
 
             if (order.special_requests) {
@@ -908,23 +866,14 @@ $role_id = $_SESSION['role_id'] ?? 1;
             document.body.style.overflow = 'auto'; // Enable scrolling
         }
 
-        // Function to download itinerary
-        function downloadItinerary(event, orderId) {
-            // Stop event propagation (to prevent showing details modal when clicking the download button)
+        // Function to view itinerary
+        function viewItinerary(event, fileUrl) {
             event.stopPropagation();
-
-            // Create a temporary link to download the file
-            const link = document.createElement('a');
-            link.href = `itinerary-${orderId}.txt`;
-            link.download = `WanderMate-Itinerary-${orderId}.txt`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            // Alert user about the download (in a real app, we'd handle this more gracefully)
-            setTimeout(() => {
-                alert('Your itinerary is being downloaded. If the download doesn\'t start automatically, please check your browser settings.');
-            }, 500);
+            if (fileUrl) {
+                window.open(fileUrl, '_blank');
+            } else {
+                alert('Itinerary file not found');
+            }
         }
 
         // Function to show cancellation confirmation modal
@@ -946,29 +895,42 @@ $role_id = $_SESSION['role_id'] ?? 1;
 
         // Function to cancel the order
         function cancelOrder(orderId) {
-            // In a real application, this would send an AJAX request to the server
-            // For this demo, we'll just update the UI
-
-            // Find the row with the order
-            const row = document.querySelector(`tr[data-order-id="${orderId}"]`);
-
-            if (row) {
-                // Update the status badge
-                const statusCell = row.querySelector('td:nth-child(4)');
-                statusCell.innerHTML = '<span class="status-badge status-cancelled">Cancelled</span>';
-
-                // Remove the cancel button
-                const cancelBtn = row.querySelector('.btn-cancel');
-                if (cancelBtn) {
-                    cancelBtn.parentNode.removeChild(cancelBtn);
-                }
+            if (!orderId) {
+                alert('Order ID is missing.');
+                return;
             }
-
-            // Close the confirmation modal
-            closeModal('cancellationModal');
-
-            // Show confirmation message
-            alert('Your booking has been cancelled successfully.');
+            // Send AJAX request to cancel-order.php
+            fetch('cancel-order.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'order_id=' + encodeURIComponent(orderId)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Find the row with the order
+                        const row = document.querySelector(`tr[data-order-id="${orderId}"]`);
+                        if (row) {
+                            // Update the status badge
+                            const statusCell = row.querySelector('td:nth-child(4)');
+                            statusCell.innerHTML = '<span class="status-badge status-cancelled">Cancelled</span>';
+                            // Remove the cancel button
+                            const cancelBtn = row.querySelector('.btn-cancel');
+                            if (cancelBtn) {
+                                cancelBtn.parentNode.removeChild(cancelBtn);
+                            }
+                        }
+                        closeModal('cancellationModal');
+                        alert('Your booking has been cancelled successfully.');
+                    } else {
+                        alert(data.message || 'Failed to cancel booking.');
+                    }
+                })
+                .catch(() => {
+                    alert('An error occurred while cancelling the booking.');
+                });
         }
 
         // Close modals when clicking outside
