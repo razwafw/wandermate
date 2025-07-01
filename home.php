@@ -13,7 +13,7 @@ if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);
 }
 $popularPackages = [];
-$sql = "SELECT p.id, p.name, p.description, p.price / p.group_size as price_per_person, (SELECT url FROM images WHERE package_id = p.id LIMIT 1) AS image_url, COUNT(o.id) AS total_orders
+$sql = "SELECT p.id, p.name, p.description, p.price / p.group_size as price_per_person, (SELECT url FROM images WHERE package_id = p.id LIMIT 1) AS image_url, SUM(o.amount)  AS total_orders
         FROM packages p
         LEFT JOIN orders o ON o.package_id = p.id
         GROUP BY p.id
