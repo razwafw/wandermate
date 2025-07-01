@@ -608,7 +608,7 @@ if ($conn->connect_error) {
                     <li>
                         <a
                             href="dashboard.php"
-                            class="nav-link active"
+                            class="nav-link"
                         >
                             <span class="material-icons icon">dashboard</span>
                             <span>Dashboard</span>
@@ -631,7 +631,7 @@ if ($conn->connect_error) {
                     <li>
                         <a
                             href="package-management.php"
-                            class="nav-link"
+                            class="nav-link active"
                         >
                             <span class="material-icons icon">luggage</span>
                             <span>Packages</span>
