@@ -4,7 +4,7 @@ $loggedIn = isset($_SESSION['user_id']);
 $role_id = $_SESSION['role_id'] ?? 1;
 
 // Database connection
-$conn = new mysqli('localhost', 'root', '', 'wandermate');
+$conn = new mysqli('localhost', 'projec15_root', '@kaesquare123', 'projec15_wandermate');
 if ($conn->connect_error) {
     die('Database connection failed: ' . $conn->connect_error);
 }

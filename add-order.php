@@ -44,7 +44,7 @@ if (!$customer_id) {
 }
 
 // Connect to DB
-$conn = new mysqli('localhost', 'root', '', 'wandermate');
+$conn = new mysqli('localhost', 'projec15_root', '@kaesquare123', 'projec15_wandermate');
 if ($conn->connect_error) {
     echo json_encode([
         'success' => FALSE,

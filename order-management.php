@@ -656,7 +656,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
             <!-- Orders Table -->
             <?php
             // Fetch orders from the database
-            $conn = new mysqli('localhost', 'root', '', 'wandermate');
+            $conn = new mysqli('localhost', 'projec15_root', '@kaesquare123', 'projec15_wandermate');
             if ($conn->connect_error) {
                 die('Connection failed: ' . $conn->connect_error);
             }

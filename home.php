@@ -5,9 +5,9 @@ $role_id = $_SESSION['role_id'] ?? 1;
 
 // Fetch most popular packages from the database
 $host = 'localhost';
-$user = 'root';
-$pass = '';
-$db = 'wandermate';
+$user = 'projec15_root';
+$pass = '@kaesquare123';
+$db = 'projec15_wandermate';
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);

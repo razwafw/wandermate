@@ -32,9 +32,9 @@ if ($order_id <= 0) {
 }
 
 $host = 'localhost';
-$user = 'root';
-$pass = '';
-$db = 'wandermate';
+$user = 'projec15_root';
+$pass = '@kaesquare123';
+$db = 'projec15_wandermate';
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
     http_response_code(500);

@@ -6,9 +6,9 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
 }
 // Database connection
 $host = 'localhost';
-$user = 'root';
-$pass = '';
-$db = 'wandermate';
+$user = 'projec15_root';
+$pass = '@kaesquare123';
+$db = 'projec15_wandermate';
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
     die('Database connection failed: ' . $conn->connect_error);
@@ -1028,96 +1028,96 @@ if ($conn->connect_error) {
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener("DOMContentLoaded", function () {
             // Create Package Button Event Listener
-            document.getElementById('createPackageBtn').addEventListener('click', function () {
+            document.getElementById("createPackageBtn").addEventListener("click", function () {
                 openCreatePackageModal();
             });
 
             // Initialize image preview for file uploads
-            document.getElementById('package_images').addEventListener('change', handleImageUpload);
+            document.getElementById("package_images").addEventListener("change", handleImageUpload);
         });
 
         // Function to open modal for creating a new package
         function openCreatePackageModal() {
             // Reset form
-            document.getElementById('packageForm').reset();
-            document.getElementById('package_id').value = '';
-            document.getElementById('modalTitle').textContent = 'Create New Package';
-            document.getElementById('imagePreviewContainer').innerHTML = '';
-            document.getElementById('existingImagesContainer').innerHTML = '';
-            document.getElementById('existing_images').value = '';
+            document.getElementById("packageForm").reset();
+            document.getElementById("package_id").value = "";
+            document.getElementById("modalTitle").textContent = "Create New Package";
+            document.getElementById("imagePreviewContainer").innerHTML = "";
+            document.getElementById("existingImagesContainer").innerHTML = "";
+            document.getElementById("existing_images").value = "";
 
             // Open modal
-            openModal('packageModal');
+            openModal("packageModal");
         }
 
         // Function to edit an existing package
         function editPackage(package) {
             // Set form title
-            document.getElementById('modalTitle').textContent = 'Edit Package';
+            document.getElementById("modalTitle").textContent = "Edit Package";
 
             // Populate form fields with package data
-            document.getElementById('package_id').value = package.id;
-            document.getElementById('package_name').value = package.name;
-            document.getElementById('subtitle').value = package.subtitle;
-            document.getElementById('price').value = package.price;
-            document.getElementById('duration').value = package.duration;
-            document.getElementById('group_size').value = package.group_size;
-            document.getElementById('start_location').value = package.start_location;
-            document.getElementById('end_location').value = package.end_location;
-            document.getElementById('description').value = package.description;
+            document.getElementById("package_id").value = package.id;
+            document.getElementById("package_name").value = package.name;
+            document.getElementById("subtitle").value = package.subtitle;
+            document.getElementById("price").value = package.price;
+            document.getElementById("duration").value = package.duration;
+            document.getElementById("group_size").value = package.group_size;
+            document.getElementById("start_location").value = package.start_location;
+            document.getElementById("end_location").value = package.end_location;
+            document.getElementById("description").value = package.description;
 
             // Handle array fields by joining with newlines
-            document.getElementById('highlights').value = package.highlights.join('\n');
-            document.getElementById('includes').value = package.includes.join('\n');
-            document.getElementById('excludes').value = package.excludes.join('\n');
+            document.getElementById("highlights").value = package.highlights.join("\n");
+            document.getElementById("includes").value = package.includes.join("\n");
+            document.getElementById("excludes").value = package.excludes.join("\n");
 
             // Handle the itinerary (key-value pairs)
             let itineraryLines = [];
             for (const [day, description] of Object.entries(package.itinerary)) {
                 itineraryLines.push(`${day} | ${description}`);
             }
-            document.getElementById('itinerary').value = itineraryLines.join('\n');
+            document.getElementById("itinerary").value = itineraryLines.join("\n");
 
             // Handle existing images
             displayExistingImages(package.images);
 
             // Open modal
-            openModal('packageModal');
+            openModal("packageModal");
         }
 
         // Function to display existing images when editing a package
         function displayExistingImages(images) {
-            const existingImagesContainer = document.getElementById('existingImagesContainer');
-            existingImagesContainer.innerHTML = '';
+            const existingImagesContainer = document.getElementById("existingImagesContainer");
+            existingImagesContainer.innerHTML = "";
 
             if (images && images.length > 0) {
                 // Store image URLs in hidden input for form submission
-                document.getElementById('existing_images').value = JSON.stringify(images);
+                document.getElementById("existing_images").value = JSON.stringify(images);
 
                 // Create heading for existing images section
-                const heading = document.createElement('h4');
-                heading.style.marginTop = '15px';
-                heading.style.marginBottom = '10px';
-                heading.textContent = 'Current Images:';
+                const heading = document.createElement("h4");
+                heading.style.marginTop = "15px";
+                heading.style.marginBottom = "10px";
+                heading.textContent = "Current Images:";
                 existingImagesContainer.appendChild(heading);
 
                 // Create image previews
-                const previewContainer = document.createElement('div');
-                previewContainer.className = 'image-preview-container';
+                const previewContainer = document.createElement("div");
+                previewContainer.className = "image-preview-container";
 
                 images.forEach((imageUrl, index) => {
-                    const previewDiv = document.createElement('div');
-                    previewDiv.className = 'image-preview';
+                    const previewDiv = document.createElement("div");
+                    previewDiv.className = "image-preview";
 
-                    const img = document.createElement('img');
+                    const img = document.createElement("img");
                     img.src = imageUrl;
-                    img.alt = 'Package Image';
+                    img.alt = "Package Image";
 
-                    const removeButton = document.createElement('span');
-                    removeButton.className = 'remove-image';
-                    removeButton.textContent = '×';
+                    const removeButton = document.createElement("span");
+                    removeButton.className = "remove-image";
+                    removeButton.textContent = "×";
                     removeButton.onclick = function () {
                         removeExistingImage(index);
                     };
@@ -1133,7 +1133,7 @@ if ($conn->connect_error) {
 
         // Function to remove an existing image
         function removeExistingImage(index) {
-            const existingImagesInput = document.getElementById('existing_images');
+            const existingImagesInput = document.getElementById("existing_images");
             const images = JSON.parse(existingImagesInput.value);
 
             images.splice(index, 1);
@@ -1146,16 +1146,16 @@ if ($conn->connect_error) {
         // Function to handle image file uploads
         function handleImageUpload(e) {
             const files = e.target.files;
-            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            const imagePreviewContainer = document.getElementById("imagePreviewContainer");
 
             // Clear previous uploads
-            imagePreviewContainer.innerHTML = '';
+            imagePreviewContainer.innerHTML = "";
 
             if (files.length > 0) {
-                const heading = document.createElement('h4');
-                heading.style.marginTop = '15px';
-                heading.style.marginBottom = '10px';
-                heading.textContent = 'New Uploads:';
+                const heading = document.createElement("h4");
+                heading.style.marginTop = "15px";
+                heading.style.marginBottom = "10px";
+                heading.textContent = "New Uploads:";
                 imagePreviewContainer.appendChild(heading);
 
                 // Process each file
@@ -1163,16 +1163,16 @@ if ($conn->connect_error) {
                     const reader = new FileReader();
 
                     reader.onload = function (event) {
-                        const previewDiv = document.createElement('div');
-                        previewDiv.className = 'image-preview';
+                        const previewDiv = document.createElement("div");
+                        previewDiv.className = "image-preview";
 
-                        const img = document.createElement('img');
+                        const img = document.createElement("img");
                         img.src = event.target.result;
-                        img.alt = 'Preview';
+                        img.alt = "Preview";
 
-                        const removeButton = document.createElement('span');
-                        removeButton.className = 'remove-image';
-                        removeButton.textContent = '×';
+                        const removeButton = document.createElement("span");
+                        removeButton.className = "remove-image";
+                        removeButton.textContent = "×";
                         removeButton.dataset.index = index;
                         removeButton.onclick = function () {
                             removeUploadedImage(this.dataset.index);
@@ -1190,7 +1190,7 @@ if ($conn->connect_error) {
 
         // Function to remove an uploaded image
         function removeUploadedImage(index) {
-            const fileInput = document.getElementById('package_images');
+            const fileInput = document.getElementById("package_images");
             const dt = new DataTransfer();
 
             // Keep all files except the one to be removed
@@ -1207,16 +1207,16 @@ if ($conn->connect_error) {
 
         // Function to show delete confirmation dialog
         function confirmDelete(id, name) {
-            document.getElementById('deleteConfirmText').textContent =
+            document.getElementById("deleteConfirmText").textContent =
                 `Are you sure you want to delete "${name}"? This action cannot be undone.`;
 
             // Set up the confirm delete button with the package ID
-            document.getElementById('confirmDeleteBtn').onclick = function () {
+            document.getElementById("confirmDeleteBtn").onclick = function () {
                 deletePackage(id);
             };
 
             // Open the modal
-            openModal('deleteModal');
+            openModal("deleteModal");
         }
 
         // Function to delete a package
@@ -1224,34 +1224,34 @@ if ($conn->connect_error) {
             // In a real application, this would send a request to delete the package
             // For this demo, we'll just show a success message
             alert(`Package #${id} deleted successfully!`);
-            closeModal('deleteModal');
+            closeModal("deleteModal");
 
             // In a real application, you would refresh the data or update the table
         }
 
         // Function to open a modal
         function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            document.getElementById(modalId).style.display = "block";
+            document.body.style.overflow = "hidden"; // Prevent scrolling
         }
 
         // Function to close a modal
         function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-            document.body.style.overflow = 'auto'; // Enable scrolling
+            document.getElementById(modalId).style.display = "none";
+            document.body.style.overflow = "auto"; // Enable scrolling
         }
 
         // Close modals when clicking outside
-        window.addEventListener('click', function (event) {
-            const packageModal = document.getElementById('packageModal');
-            const deleteModal = document.getElementById('deleteModal');
+        window.addEventListener("click", function (event) {
+            const packageModal = document.getElementById("packageModal");
+            const deleteModal = document.getElementById("deleteModal");
 
             if (event.target === packageModal) {
-                closeModal('packageModal');
+                closeModal("packageModal");
             }
 
             if (event.target === deleteModal) {
-                closeModal('deleteModal');
+                closeModal("deleteModal");
             }
         });
     </script>
