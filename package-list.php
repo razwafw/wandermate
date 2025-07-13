@@ -431,6 +431,7 @@ $conn->close();
                     type="text"
                     class="search-input"
                     placeholder="Search for packages, destinations..."
+                    id="package-search"
                 />
                 <button
                     class="search-btn"
@@ -439,6 +440,32 @@ $conn->close();
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
             </div>
+            <script>
+                // Debounce function
+                function debounce(fn, delay) {
+                    let timer = null;
+                    return function (...args) {
+                        clearTimeout(timer);
+                        timer = setTimeout(() => fn.apply(this, args), delay);
+                    };
+                }
+
+                // Search handler
+                function handleSearch() {
+                    const input = document.getElementById("package-search").value.trim().toLowerCase();
+                    const cards = document.querySelectorAll(".package-card");
+                    cards.forEach(card => {
+                        const name = card.querySelector(".package-name").textContent.toLowerCase();
+                        if (name.includes(input)) {
+                            card.style.display = "";
+                        } else {
+                            card.style.display = "none";
+                        }
+                    });
+                }
+
+                document.getElementById("package-search").addEventListener("input", debounce(handleSearch, 300));
+            </script>
 
             <div class="packages-grid">
                 <?php if (count($packages) > 0): ?>
