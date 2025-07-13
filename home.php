@@ -263,7 +263,7 @@ $conn->close();
 
         /* Hero Section */
         .hero {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://picsum.photos/1600/900?<?php echo rand(5001, 6000); ?>');
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('man-standing-near-cliff.jpg');
             background-size: cover;
             background-position: center;
             height: 80vh;
@@ -543,7 +543,7 @@ $conn->close();
                     </div>
                     <div class="about-image">
                         <img
-                            src="https://picsum.photos/600/400?<?php echo rand(1, 1000); ?>"
+                            src="business-conversation.jpg"
                             alt="WanderMate Office"
                         >
                     </div>
