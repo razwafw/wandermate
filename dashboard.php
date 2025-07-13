@@ -307,6 +307,7 @@ if ($orderResult && $row = $orderResult->fetch_assoc()) {
         .btn-dashboard {
             padding: 12px 20px;
             font-size: 1rem;
+            cursor: pointer;
         }
 
         .btn-green {

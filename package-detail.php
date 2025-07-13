@@ -695,13 +695,6 @@ $itinerary = parseItinerary($package['itinerary']);
         <!-- Package Header -->
         <div class="package-header">
             <div class="container">
-                <!-- Breadcrumb navigation -->
-                <div class="breadcrumb">
-                    <a href="#">Travel Packages</a>
-                    <span class="separator">›</span>
-                    <span class="current"><?php echo htmlspecialchars($package['name']); ?></span>
-                </div>
-
                 <h1 class="package-title"><?php echo htmlspecialchars($package['name']); ?></h1>
                 <p class="package-subtitle"><?php echo htmlspecialchars($package['subtitle']); ?></p>
             </div>
@@ -814,15 +807,16 @@ $itinerary = parseItinerary($package['itinerary']);
                             Book Now
                         </button>
                         <?php if (!$loggedIn): ?>
-                            <p class="login-prompt">Please
-                                <a href="#">log in</a>
+                            <p class="login-prompt">
+                                Please
+                                <a href="login.php">log in</a>
                                 to book this package
                             </p>
                         <?php endif; ?>
                         <div class="return-to-list">
                             <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
                             <a
-                                href="#"
+                                href="package-list.php"
                                 class="btn btn-outline btn-full"
                             >
                                 Back to Packages

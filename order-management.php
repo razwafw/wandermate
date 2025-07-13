@@ -331,7 +331,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
             color: #333;
         }
 
-        .orders-table tr:hover {
+        .orders-table tbody tr:hover {
             background-color: #f9f9f9;
             cursor: pointer;
         }

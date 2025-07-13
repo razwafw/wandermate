@@ -306,7 +306,7 @@ $stmt->close();
             color: #333;
         }
 
-        .orders-table tr:hover {
+        .orders-table tbody tr:hover {
             background-color: #f9f9f9;
             cursor: pointer;
         }
