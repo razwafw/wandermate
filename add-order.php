@@ -10,6 +10,26 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
+// Get user id and role id from session
+$customer_id = $_SESSION['user_id'] ?? NULL;
+$role_id = $_SESSION['role_id'] ?? 1;
+
+if (!$customer_id) {
+    echo json_encode([
+        'success' => FALSE,
+        'message' => 'User not logged in.',
+    ]);
+    exit();
+}
+
+if ($role_id == 2) {
+    echo json_encode([
+        'success' => FALSE,
+        'message' => 'Action not allowed.',
+    ]);
+    exit();
+}
+
 // Validate required fields
 $required = [
     'package_id',
@@ -31,18 +51,6 @@ $departureDate = trim($_POST['departureDate']);
 $travelers = intval($_POST['travelers']);
 $specialRequests = isset($_POST['specialRequests']) ? trim($_POST['specialRequests']) : NULL;
 
-// Get user id and role id from session
-$customer_id = $_SESSION['user_id'] ?? NULL;
-$role_id = $_SESSION['role_id'] ?? 1;
-
-if (!$customer_id) {
-    echo json_encode([
-        'success' => FALSE,
-        'message' => 'User not logged in.',
-    ]);
-    exit();
-}
-
 // Connect to DB
 $conn = new mysqli('localhost', 'projec15_root', '@kaesquare123', 'projec15_wandermate');
 if ($conn->connect_error) {
@@ -61,17 +69,10 @@ $stmt->close();
 $conn->close();
 
 if ($success) {
-    if ($role_id == 1) {
-        echo json_encode([
-            'success' => TRUE,
-            'message' => 'Order created successfully. Await contact from admin.',
-        ]);
-    } else {
-        echo json_encode([
-            'success' => TRUE,
-            'message' => 'Order created successfully.',
-        ]);
-    }
+    echo json_encode([
+        'success' => TRUE,
+        'message' => 'Order created successfully.',
+    ]);
 } else {
     echo json_encode([
         'success' => FALSE,

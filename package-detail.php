@@ -809,7 +809,7 @@ $itinerary = parseItinerary($package['itinerary']);
                         <button
                             id="bookNowBtn"
                             class="btn btn-full"
-                            <?php echo $loggedIn ? '' : 'disabled'; ?>
+                            <?php echo $loggedIn && $role_id != 2 ? '' : 'disabled'; ?>
                         >
                             Book Now
                         </button>
