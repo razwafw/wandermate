@@ -669,6 +669,17 @@ if ($conn->connect_error) {
             </div>
 
             <?php
+            // Banner for operation result
+            if (isset($_GET['success'])) {
+                echo '<div style="background:#d4edda;color:#155724;padding:15px;text-align:center;margin-bottom:20px;border-radius:5px;">Operation successful.</div>';
+            } else if (isset($_GET['deleted'])) {
+                echo '<div style="background:#d4edda;color:#155724;padding:15px;text-align:center;margin-bottom:20px;border-radius:5px;">Package deleted successfully.</div>';
+            } else if (isset($_GET['delete_failed'])) {
+                echo '<div style="background:#f8d7da;color:#721c24;padding:15px;text-align:center;margin-bottom:20px;border-radius:5px;">Delete failed: There are existing orders for this package.</div>';
+            } else if (isset($_GET['error'])) {
+                echo '<div style="background:#f8d7da;color:#721c24;padding:15px;text-align:center;margin-bottom:20px;border-radius:5px;">Operation failed. Please try again.</div>';
+            }
+
             // Parse highlights, includes, excludes, itinerary
             function parseNewlineList($str)
             {

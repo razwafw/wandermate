@@ -1,21 +1,20 @@
 <?php
 session_start();
 if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
-    http_response_code(403);
-    echo 'Unauthorized';
+    header('Location: package-management.php?error=1');
     exit();
 }
 
 // DB connection
 $conn = new mysqli('localhost', 'projec15_root', '@kaesquare123', 'projec15_wandermate');
 if ($conn->connect_error) {
-    die('Database connection failed: ' . $conn->connect_error);
+    header('Location: package-management.php?error=1');
+    exit();
 }
 
 // Handle POST only
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo 'Method Not Allowed';
+    header('Location: package-management.php?error=1');
     exit();
 }
 
@@ -40,8 +39,7 @@ $itinerary = post('itinerary');
 
 // Validate required fields
 if (!$name || !$subtitle || !$price || !$duration || !$group_size || !$start_location || !$end_location || !$description) {
-    http_response_code(400);
-    echo 'Missing required fields';
+    header('Location: package-management.php?error=1');
     exit();
 }
 
@@ -49,8 +47,7 @@ if (!$name || !$subtitle || !$price || !$duration || !$group_size || !$start_loc
 $stmt = $conn->prepare("INSERT INTO packages (name, subtitle, price, duration, group_size, start_location, end_location, description, highlights, includes, excludes, itinerary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 $stmt->bind_param('ssdsssssssss', $name, $subtitle, $price, $duration, $group_size, $start_location, $end_location, $description, $highlights, $includes, $excludes, $itinerary);
 if (!$stmt->execute()) {
-    http_response_code(500);
-    echo 'Failed to add package: ' . $stmt->error;
+    header('Location: package-management.php?error=1');
     exit();
 }
 $package_id = $stmt->insert_id;

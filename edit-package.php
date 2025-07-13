@@ -1,21 +1,20 @@
 <?php
 session_start();
 if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
-    http_response_code(403);
-    echo 'Unauthorized';
+    header('Location: package-management.php?error=1');
     exit();
 }
 
 // DB connection
 $conn = new mysqli('localhost', 'projec15_root', '@kaesquare123', 'projec15_wandermate');
 if ($conn->connect_error) {
-    die('Database connection failed: ' . $conn->connect_error);
+    header('Location: package-management.php?error=1');
+    exit();
 }
 
 // Handle POST only
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo 'Method Not Allowed';
+    header('Location: package-management.php?error=1');
     exit();
 }
 
@@ -41,21 +40,18 @@ $package_id = intval(post('package_id'));
 
 // Validate required fields
 if (!$name || !$subtitle || !$price || !$duration || !$group_size || !$start_location || !$end_location || !$description) {
-    http_response_code(400);
-    echo 'Missing required fields';
+    header('Location: package-management.php?error=1');
     exit();
 }
 
 if (!$package_id) {
-    http_response_code(400);
-    echo 'Invalid package ID';
+    header('Location: package-management.php?error=1');
     exit();
 }
 
 $stmt = $conn->prepare("UPDATE packages SET name=?, subtitle=?, price=?, duration=?, group_size=?, start_location=?, end_location=?, description=?, highlights=?, includes=?, excludes=?, itinerary=? WHERE id=?");
 if (!$stmt) {
-    http_response_code(500);
-    echo 'Failed to prepare statement';
+    header('Location: package-management.php?error=1');
     exit();
 }
 $stmt->bind_param(
@@ -123,8 +119,8 @@ if ($stmt->execute()) {
     header('Location: package-management.php?success=1');
     exit();
 } else {
-    http_response_code(500);
-    echo 'Failed to update package';
+    header('Location: package-management.php?error=1');
+    exit();
 }
 $stmt->close();
 $conn->close();
