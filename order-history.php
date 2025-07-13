@@ -1,6 +1,6 @@
 <?php
 session_start();
-$loggedIn = isset($_SESSION['user_id']);
+$loggedIn = isset($_SESSION['user_id']) && isset($_SESSION['role_id']);
 
 if (!$loggedIn) {
     header("Location: login.php");
@@ -127,131 +127,6 @@ $stmt->close();
         button[disabled]:hover {
             background-color: #cccccc !important;
             color: #666666 !important;
-        }
-    </style>
-
-    <!-- Header Styles -->
-    <style>
-        header {
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            color: midnightblue;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .logo span {
-            color: #000;
-        }
-
-        nav ul {
-            display: flex;
-            align-items: center;
-            list-style: none;
-        }
-
-        nav ul li {
-            margin-left: 30px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: #000;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        nav ul li a:hover {
-            color: midnightblue;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-            }
-
-            nav ul {
-                margin-top: 20px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            nav ul li {
-                margin: 5px 10px;
-            }
-        }
-    </style>
-
-    <!-- Footer Styles -->
-    <style>
-        footer {
-            background-color: #111;
-            color: #fff;
-            padding: 60px 0 20px;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .footer-column {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .footer-column h3 {
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-            color: #fff;
-        }
-
-        .footer-column p {
-            color: #bbb;
-            margin-bottom: 10px;
-            width: 100%;
-        }
-
-        .footer-column a {
-            color: #bbb;
-            margin-bottom: 10px;
-            text-decoration: none;
-            transition: color 0.3s;
-            display: inline-block;
-            padding: 3px 8px;
-        }
-
-        .footer-column a:hover {
-            color: #fff;
-        }
-
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid #333;
-            color: #999;
-            font-size: 0.9rem;
         }
     </style>
 
@@ -545,72 +420,7 @@ $stmt->close();
 </head>
 <body>
     <!-- Header -->
-    <header>
-        <div class="container nav-container">
-            <a
-                href="#"
-                class="logo"
-            >
-                Wander<span>Mate</span>
-            </a>
-
-            <nav>
-                <ul>
-                    <li>
-                        <a href="index.php">Home</a>
-                    </li>
-                    <li>
-                        <a href="package-list.php">Packages</a>
-                    </li>
-
-                    <?php if (!$loggedIn): ?>
-                        <li>
-                            <a
-                                href="login.php"
-                                class="btn btn-sm"
-                            >
-                                Login
-                            </a>
-                        </li>
-                    <?php else: ?>
-                        <?php if ($role_id === 1): ?>
-                            <li>
-                                <a href="order-history.php">My Orders</a>
-                            </li>
-                        <?php elseif ($role_id === 2): ?>
-                            <li>
-                                <a href="dashboard.php">Dashboard</a>
-                            </li>
-                        <?php endif; ?>
-
-                        <li>
-                            <a
-                                href="logout.php"
-                                class="btn btn-sm"
-                            >
-                                Logout
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <script>
-        // Function to set scroll padding based on header height
-        function setScrollPadding() {
-            const header = document.querySelector("header");
-            const headerHeight = header.offsetHeight;
-            document.documentElement.style.scrollPaddingTop = headerHeight + "px";
-        }
-
-        // Set initial scroll padding
-        window.addEventListener("DOMContentLoaded", setScrollPadding);
-
-        // Update scroll padding on window resize
-        window.addEventListener("resize", setScrollPadding);
-    </script>
+    <?php include 'header.php'; ?>
 
     <!-- Page Content -->
     <main>
@@ -764,34 +574,6 @@ $stmt->close();
             </div>
         </div>
     </main>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>WanderMate</h3>
-                    <p>Your trusted travel partner since 2018. We specialize in creating unforgettable travel experiences across the globe.</p>
-                </div>
-                <div class="footer-column">
-                    <h3>Contact Us</h3>
-                    <p>123 Travel Street, Suite 100</p>
-                    <p>New York, NY 10001</p>
-                    <p>Phone: (123) 456-7890</p>
-                    <p>Email: info@wandermate.com</p>
-                </div>
-                <div class="footer-column">
-                    <h3>Quick Links</h3>
-                    <a href="#">Home</a>
-                    <a href="#">About Us</a>
-                    <a href="#">Packages</a>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; <?php echo date("Y"); ?> WanderMate Travel Agency. All Rights Reserved.</p>
-            </div>
-        </div>
-    </footer>
 
     <script>
         // Store current order ID for cancellation
@@ -953,5 +735,8 @@ $stmt->close();
             }
         });
     </script>
+
+    <!-- Footer -->
+    <?php include 'footer.php'; ?>
 </body>
 </html>
