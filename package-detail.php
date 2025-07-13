@@ -650,7 +650,7 @@ $itinerary = parseItinerary($package['itinerary']);
             <nav>
                 <ul>
                     <li>
-                        <a href="home.php">Home</a>
+                        <a href="index.php">Home</a>
                     </li>
                     <li>
                         <a href="package-list.php">Packages</a>

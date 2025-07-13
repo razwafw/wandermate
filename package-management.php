@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
-    header('Location: home.php');
+    header('Location: index.php');
     exit();
 }
 // Database connection

@@ -10,7 +10,7 @@ if (!$loggedIn) {
 $role_id = $_SESSION['role_id'] ?? 1;
 
 if ($role_id !== 1) {
-    header("Location: home.php");
+    header("Location: index.php");
     exit();
 }
 
@@ -557,7 +557,7 @@ $stmt->close();
             <nav>
                 <ul>
                     <li>
-                        <a href="home.php">Home</a>
+                        <a href="index.php">Home</a>
                     </li>
                     <li>
                         <a href="package-list.php">Packages</a>

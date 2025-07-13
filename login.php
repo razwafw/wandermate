@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (isset($_SESSION['user_id'])) {
-    header('Location: home.php');
+    header('Location: index.php');
     exit();
 }
 $error = isset($_GET['error']) && $_GET['error'] == 1;

@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
-    header('Location: home.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -528,7 +528,7 @@ if ($orderResult && $row = $orderResult->fetch_assoc()) {
 
                 <div class="dashboard-actions">
                     <a
-                        href="home.php"
+                        href="index.php"
                         class="btn btn-outline"
                         target="_blank"
                     >

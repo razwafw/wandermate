@@ -443,7 +443,7 @@ $conn->close();
     <header>
         <div class="container nav-container">
             <a
-                href="home.php"
+                href="index.php"
                 class="logo"
             >
                 Wander<span>Mate</span>
@@ -451,7 +451,7 @@ $conn->close();
             <nav>
                 <ul>
                     <li>
-                        <a href="home.php">Home</a>
+                        <a href="index.php">Home</a>
                     </li>
                     <li>
                         <a href="package-list.php">Packages</a>
@@ -623,8 +623,8 @@ $conn->close();
                 </div>
                 <div class="footer-column">
                     <h3>Quick Links</h3>
-                    <a href="home.php">Home</a>
-                    <a href="home.php">About Us</a>
+                    <a href="index.php">Home</a>
+                    <a href="index.php">About Us</a>
                     <a href="package-list.php">Packages</a>
                 </div>
             </div>

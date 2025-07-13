@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($password === $db_password) { // For demo only; use password_hash in production
             $_SESSION['user_id'] = $user_id;
             $_SESSION['role_id'] = $role_id;
-            header('Location: home.php');
+            header('Location: index.php');
             exit();
         } else {
             $error = TRUE;
