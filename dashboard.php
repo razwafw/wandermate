@@ -119,90 +119,7 @@ if ($orderResult && $row = $orderResult->fetch_assoc()) {
             display: flex;
         }
 
-        .sidebar {
-            width: 280px;
-            background-color: midnightblue;
-            color: white;
-            padding: 30px 0;
-            height: 100vh;
-            position: fixed;
-            z-index: 1000;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar-brand {
-            padding: 0 25px 25px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .sidebar-brand h2 {
-            color: white;
-            font-size: 1.8rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .sidebar-brand span {
-            color: #adb5bd;
-            font-weight: 300;
-        }
-
-        .sidebar-menu {
-            padding: 0 25px;
-        }
-
-        .sidebar-menu h3 {
-            color: #adb5bd;
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            margin-bottom: 15px;
-            font-weight: 400;
-        }
-
-        .sidebar-menu ul {
-            list-style-type: none;
-        }
-
-        .sidebar-menu li {
-            margin-bottom: 10px;
-        }
-
-        .sidebar-menu .nav-link {
-            color: white;
-            text-decoration: none;
-            font-size: 1.1rem;
-            padding: 12px 15px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            transition: all 0.3s;
-        }
-
-        .sidebar-menu .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-menu .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.2);
-            font-weight: 500;
-        }
-
-        .sidebar-menu .icon {
-            margin-right: 10px;
-            font-size: 1.2rem;
-        }
-
-        .sidebar-footer {
-            position: absolute;
-            bottom: 20px;
-            width: 100%;
-            padding: 0 25px;
-            color: #adb5bd;
-            font-size: 0.9rem;
-        }
-
-        .main-content {
+        main {
             flex: 1;
             margin-left: 280px;
             padding: 30px;
@@ -369,72 +286,8 @@ if ($orderResult && $row = $orderResult->fetch_assoc()) {
             font-size: 1.1rem;
         }
 
-        /* For icons */
-        .material-icons {
-            font-family: 'Material Icons';
-            font-weight: normal;
-            font-style: normal;
-            font-size: 24px;
-            display: inline-block;
-            line-height: 1;
-            text-transform: none;
-            letter-spacing: normal;
-            word-wrap: normal;
-            white-space: nowrap;
-            direction: ltr;
-            vertical-align: middle;
-        }
-
         @media (max-width: 992px) {
-            .sidebar {
-                width: 80px;
-                padding: 20px 0;
-            }
-
-            .sidebar-brand {
-                padding: 0 15px 15px;
-                text-align: center;
-            }
-
-            .sidebar-brand h2 {
-                font-size: 1.2rem;
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .sidebar-menu {
-                padding: 0 10px;
-            }
-
-            .sidebar-menu h3 {
-                text-align: center;
-                font-size: 0.7rem;
-            }
-
-            .sidebar-menu .nav-link {
-                justify-content: center;
-                padding: 12px;
-            }
-
-            .sidebar-menu .nav-link span {
-                display: none;
-            }
-
-            .sidebar-menu .nav-link span.icon {
-                display: block;
-            }
-
-            .sidebar-menu .icon {
-                margin-right: 0;
-                font-size: 1.5rem;
-            }
-
-            .sidebar-footer {
-                display: none;
-            }
-
-            .main-content {
+            main {
                 margin-left: 80px;
             }
         }
@@ -466,64 +319,10 @@ if ($orderResult && $row = $orderResult->fetch_assoc()) {
 <body>
     <div class="dashboard-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-brand">
-                <h2>Wander<span>Mate</span></h2>
-            </div>
-
-            <div class="sidebar-menu">
-                <ul>
-                    <li>
-                        <a
-                            href="dashboard.php"
-                            class="nav-link active"
-                        >
-                            <span class="material-icons icon">dashboard</span>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                </ul>
-                <ul>
-                    <li>
-                        <a
-                            href="logout.php"
-                            class="nav-link"
-                        >
-                            <span class="material-icons icon">logout</span>
-                            <span>Logout</span>
-                        </a>
-                    </li>
-                </ul>
-                <h3>Manage</h3>
-                <ul>
-                    <li>
-                        <a
-                            href="package-management.php"
-                            class="nav-link"
-                        >
-                            <span class="material-icons icon">luggage</span>
-                            <span>Packages</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href="order-management.php"
-                            class="nav-link"
-                        >
-                            <span class="material-icons icon">shopping_cart</span>
-                            <span>Orders</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="sidebar-footer">
-                <p>&copy; 2025 WanderMate</p>
-            </div>
-        </aside>
+        <?php include 'sidebar.php'; ?>
 
         <!-- Main Content -->
-        <main class="main-content">
+        <main>
             <div class="dashboard-header">
                 <h1 class="dashboard-title">Admin Dashboard</h1>
 
@@ -533,7 +332,13 @@ if ($orderResult && $row = $orderResult->fetch_assoc()) {
                         class="btn btn-outline"
                         target="_blank"
                     >
-                        <span class="material-icons">visibility</span> View Site
+                        <span
+                            class="material-icons"
+                            style="vertical-align: middle"
+                        >
+                            visibility
+                        </span>
+                        View Site
                     </a>
                 </div>
             </div>
