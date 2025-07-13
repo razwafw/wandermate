@@ -1083,6 +1083,9 @@ if ($conn->connect_error) {
             // Handle existing images
             displayExistingImages(package.images);
 
+            // Set form action to edit
+            document.getElementById("packageForm").action = "edit-package.php";
+
             // Open modal
             openModal("packageModal");
         }
