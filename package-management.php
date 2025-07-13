@@ -1212,13 +1212,19 @@ if ($conn->connect_error) {
         function confirmDelete(id, name) {
             document.getElementById("deleteConfirmText").textContent =
                 `Are you sure you want to delete "${name}"? This action cannot be undone.`;
-
-            // Set up the confirm delete button with the package ID
             document.getElementById("confirmDeleteBtn").onclick = function () {
-                deletePackage(id);
+                // Submit form to delete-package.php
+                var form = document.createElement("form");
+                form.method = "POST";
+                form.action = "delete-package.php";
+                var input = document.createElement("input");
+                input.type = "hidden";
+                input.name = "package_id";
+                input.value = id;
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
             };
-
-            // Open the modal
             openModal("deleteModal");
         }
 
