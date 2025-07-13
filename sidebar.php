@@ -1,3 +1,10 @@
+<?php
+if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
+    http_response_code(403);
+    exit('Direct access not allowed.');
+}
+?>
+
 <link
     rel="stylesheet"
     href="sidebar.css"

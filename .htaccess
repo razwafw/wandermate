@@ -1,0 +1,3 @@
+<FilesMatch "^(env|config|header|footer|sidebar)\.php$">
+    Require all denied
+</FilesMatch>

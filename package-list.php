@@ -1,5 +1,5 @@
 <?php
-include 'env.php';
+require_once 'config.php';
 
 // Database connection
 $conn = new mysqli('localhost', 'projec15_root', '@kaesquare123', 'projec15_wandermate');

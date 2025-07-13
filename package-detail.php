@@ -1,5 +1,5 @@
 <?php
-include 'env.php';
+require_once 'config.php';
 
 session_start();
 $loggedIn = isset($_SESSION['user_id']);

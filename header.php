@@ -1,4 +1,9 @@
 <?php
+if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
+    http_response_code(403);
+    exit('Direct access not allowed.');
+}
+
 session_start();
 $loggedIn = isset($_SESSION['user_id']);
 $role_id = $_SESSION['role_id'] ?? 1;

@@ -1,5 +1,5 @@
 <?php
-include 'env.php';
+require_once 'config.php';
 
 // Fetch most popular packages from the database
 $host = 'localhost';
