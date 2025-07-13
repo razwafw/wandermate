@@ -1,4 +1,6 @@
 <?php
+include 'env.php';
+
 session_start();
 $loggedIn = isset($_SESSION['user_id']);
 $role_id = $_SESSION['role_id'] ?? 1;

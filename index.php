@@ -1,4 +1,6 @@
 <?php
+include 'env.php';
+
 // Fetch most popular packages from the database
 $host = 'localhost';
 $user = 'projec15_root';

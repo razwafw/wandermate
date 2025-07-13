@@ -1,4 +1,6 @@
 <?php
+require_once 'config.php';
+
 session_start();
 $loggedIn = isset($_SESSION['user_id']) && isset($_SESSION['role_id']);
 

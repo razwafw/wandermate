@@ -1,4 +1,6 @@
 <?php
+include 'env.php';
+
 // Database connection
 $conn = new mysqli('localhost', 'projec15_root', '@kaesquare123', 'projec15_wandermate');
 if ($conn->connect_error) {

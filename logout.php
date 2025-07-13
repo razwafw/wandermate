@@ -1,4 +1,6 @@
 <?php
+require_once 'config.php';
+
 session_start();
 if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION)) {
     session_unset();
