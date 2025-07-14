@@ -6,6 +6,25 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
     header('Location: index.php');
     exit();
 }
+
+require_once 'DatabaseConnection.php';
+$conn = new DatabaseConnection();
+if ($conn->connect_error) {
+    die('Connection failed: ' . $conn->connect_error);
+}
+$sql = "SELECT o.id, o.customer_id, u.name AS customer_name, u.email, u.phone, o.package_id, p.name AS package_name, o.amount AS travelers, o.departure_date, o.booking_date, s.name AS status, o.request AS special_requests, o.amount * p.price AS total_price, o.itinerary_url AS itinerary_file
+                    FROM orders o
+                    LEFT JOIN users u ON o.customer_id = u.id
+                    LEFT JOIN packages p ON o.package_id = p.id
+                    LEFT JOIN statuses s ON o.status_id = s.id
+                    ORDER BY o.booking_date";
+$result = $conn->query($sql);
+$orders = [];
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $orders[] = $row;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -455,27 +474,6 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
             </div>
 
             <!-- Orders Table -->
-            <?php
-            // Fetch orders from the database
-            $conn = new mysqli('localhost', 'projec15_root', '@kaesquare123', 'projec15_wandermate');
-            if ($conn->connect_error) {
-                die('Connection failed: ' . $conn->connect_error);
-            }
-            $sql = "SELECT o.id, o.customer_id, u.name AS customer_name, u.email, u.phone, o.package_id, p.name AS package_name, o.amount AS travelers, o.departure_date, o.booking_date, s.name AS status, o.request AS special_requests, o.amount * p.price AS total_price, o.itinerary_url AS itinerary_file
-                    FROM orders o
-                    LEFT JOIN users u ON o.customer_id = u.id
-                    LEFT JOIN packages p ON o.package_id = p.id
-                    LEFT JOIN statuses s ON o.status_id = s.id
-                    ORDER BY o.booking_date";
-            $result = $conn->query($sql);
-            $orders = [];
-            if ($result && $result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $orders[] = $row;
-                }
-            }
-            ?>
-
             <div class="orders-container">
                 <table class="orders-table">
                     <thead>

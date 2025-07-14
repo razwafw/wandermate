@@ -1,17 +1,6 @@
 <?php
 require_once 'config.php';
 
-session_start();
-
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode([
-        'success' => FALSE,
-        'message' => 'Unauthorized',
-    ]);
-    exit();
-}
-
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode([
@@ -21,23 +10,22 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-$order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-$user_id = $_SESSION['user_id'];
+session_start();
 
-if ($order_id <= 0) {
-    http_response_code(400);
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role_id'])) {
+    http_response_code(401);
     echo json_encode([
         'success' => FALSE,
-        'message' => 'Invalid order ID',
+        'message' => 'Unauthorized',
     ]);
     exit();
 }
 
-$host = 'localhost';
-$user = 'projec15_root';
-$pass = '@kaesquare123';
-$db = 'projec15_wandermate';
-$conn = new mysqli($host, $user, $pass, $db);
+$order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+$user_id = $_SESSION['user_id'];
+
+require_once 'DatabaseConnection.php';
+$conn = new DatabaseConnection();
 if ($conn->connect_error) {
     http_response_code(500);
     echo json_encode([
@@ -47,7 +35,6 @@ if ($conn->connect_error) {
     exit();
 }
 
-// Only allow the user to cancel their own order
 $sql = "UPDATE orders SET status_id = 1 WHERE id = ? AND customer_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('ii', $order_id, $user_id);

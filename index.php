@@ -1,34 +1,39 @@
 <?php
 require_once 'config.php';
 
-// Fetch most popular packages from the database
-$host = 'localhost';
-$user = 'projec15_root';
-$pass = '@kaesquare123';
-$db = 'projec15_wandermate';
-$conn = new mysqli($host, $user, $pass, $db);
+session_start();
+$loggedIn = isset($_SESSION['user_id']) && isset($_SESSION['role_id']);
+$role_id = $_SESSION['role_id'];
+
+require_once 'DatabaseConnection.php';
+
+$conn = new DatabaseConnection();
+
 if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
+    die('Database connection failed: ' . $conn->connect_error);
 }
+
 $popularPackages = [];
-$sql = "SELECT p.id, p.name, p.description, p.price / p.group_size as price_per_person, (SELECT url FROM images WHERE package_id = p.id LIMIT 1) AS image_url, SUM(o.amount)  AS total_orders
-        FROM packages p
-        LEFT JOIN orders o ON o.package_id = p.id
-        GROUP BY p.id
-        ORDER BY total_orders DESC, price_per_person
-        LIMIT 3";
+
+$sql = "
+    SELECT p.id, p.name, p.description, p.price / p.group_size as price_per_person, p.images, SUM(o.amount)  AS total_orders 
+    FROM packages p
+    LEFT JOIN orders o ON o.package_id = p.id
+    GROUP BY p.id
+    ORDER BY total_orders DESC, price_per_person
+    LIMIT 3
+";
+
 $result = $conn->query($sql);
+
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        // Get first image for the package
-        $imgSql = "SELECT url FROM images WHERE package_id = " . $row['id'] . " LIMIT 1";
-        $imgResult = $conn->query($imgSql);
-        $row['image_url'] = ($imgResult && $imgResult->num_rows > 0)
-            ? $imgResult->fetch_assoc()['url']
-            : 'https://picsum.photos/600/400?random=' . $row['id'];
+        $row['image'] = trim(explode("\n", $row['images'])[0]);
+
         $popularPackages[] = $row;
     }
 }
+
 $conn->close();
 ?>
 
@@ -366,13 +371,12 @@ $conn->close();
                 <div class="section-title">
                     <h2>Popular Packages</h2>
                     <p>Explore our most sought-after travel experiences and find your next dream destination.</p>
-                </div>
-                <div class="package-cards">
+
                     <?php foreach ($popularPackages as $pkg): ?>
                         <div class="package-card">
                             <div class="package-img">
                                 <img
-                                    src="<?php echo htmlspecialchars($pkg['image_url']); ?>"
+                                    src="<?php echo htmlspecialchars($pkg['image']); ?>"
                                     alt="<?php echo htmlspecialchars($pkg['name']); ?>"
                                 >
                             </div>
@@ -383,7 +387,8 @@ $conn->close();
                                 <a
                                     href="package-detail.php?id=<?php echo $pkg['id']; ?>"
                                     class="btn"
-                                >View Details
+                                >
+                                    View Details
                                 </a>
                             </div>
                         </div>

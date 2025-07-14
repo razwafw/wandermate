@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="wandermate@localhost" uuid="57d13cad-ee0f-4ab0-a077-2a24bb5557bd">
+    <data-source source="LOCAL" name="projec15_wandermate@localhost" uuid="f45e9e11-a01d-45ca-b74d-cac5349ac654">
       <driver-ref>mariadb</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mariadb://localhost:3306/wandermate</jdbc-url>
+      <jdbc-url>jdbc:mariadb://localhost:3306/projec15_wandermate</jdbc-url>
       <jdbc-additional-properties>
         <property name="database.introspection.mysql.dbe5060" value="true" />
       </jdbc-additional-properties>

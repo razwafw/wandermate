@@ -1,21 +1,32 @@
 <?php
 require_once 'config.php';
 
-// Database connection
-$conn = new mysqli('localhost', 'projec15_root', '@kaesquare123', 'projec15_wandermate');
+session_start();
+$loggedIn = isset($_SESSION['user_id']) && isset($_SESSION['role_id']);
+$role_id = $_SESSION['role_id'];
+
+require_once 'DatabaseConnection.php';
+
+$conn = new DatabaseConnection();
+
+$packages = [];
+
 if ($conn->connect_error) {
     die('Database connection failed: ' . $conn->connect_error);
 }
 
-// Fetch packages with their first image
-$packages = [];
-$sql = 'SELECT p.id, p.name, p.description, p.price / p.group_size as price_per_person, (SELECT url FROM images WHERE package_id = p.id LIMIT 1) AS image_url FROM packages p';
+$sql = 'SELECT p.id, p.name, p.description, p.price / p.group_size as price_per_person, p.images FROM packages p';
+
 $result = $conn->query($sql);
+
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
+        $row['image'] = trim(explode("\n", $row['images'])[0]);
+
         $packages[] = $row;
     }
 }
+
 $conn->close();
 ?>
 
@@ -291,33 +302,29 @@ $conn->close();
             </script>
 
             <div class="packages-grid">
-                <?php if (count($packages) > 0): ?>
-                    <?php foreach ($packages as $package): ?>
-                        <div class="package-card">
-                            <div
-                                class="package-image"
-                                style="background-image: url('<?php echo htmlspecialchars($package['image_url'] ?: 'bali.jpg'); ?>');"
-                            ></div>
-                            <div class="package-content">
-                                <h3 class="package-name"><?php echo htmlspecialchars($package['name']); ?></h3>
-                                <p class="package-description"><?php echo htmlspecialchars($package['description']); ?></p>
-                                <p class="package-price">From
-                                    <span class="price-highlight">$<?php echo number_format($package['price_per_person']); ?></span> per person
-                                </p>
-                                <div class="package-action">
-                                    <a
-                                        href="package-detail.php?id=<?php echo $package['id']; ?>"
-                                        class="btn"
-                                    >
-                                        View Details
-                                    </a>
-                                </div>
+                <?php foreach ($packages as $package): ?>
+                    <div class="package-card">
+                        <div
+                            class="package-image"
+                            style="background-image: url('<?php echo htmlspecialchars($package['image']); ?>');"
+                        ></div>
+                        <div class="package-content">
+                            <h3 class="package-name"><?php echo htmlspecialchars($package['name']); ?></h3>
+                            <p class="package-description"><?php echo htmlspecialchars($package['description']); ?></p>
+                            <p class="package-price">From
+                                <span class="price-highlight">$<?php echo number_format($package['price_per_person']); ?></span> per person
+                            </p>
+                            <div class="package-action">
+                                <a
+                                    href="package-detail.php?id=<?php echo $package['id']; ?>"
+                                    class="btn"
+                                >
+                                    View Details
+                                </a>
                             </div>
                         </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>No packages found.</p>
-                <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </main>

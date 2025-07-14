@@ -2,38 +2,31 @@
 require_once 'config.php';
 
 session_start();
-$loggedIn = isset($_SESSION['user_id']);
-$role_id = $_SESSION['role_id'] ?? 1;
+$loggedIn = isset($_SESSION['user_id']) && isset($_SESSION['role_id']);
+$role_id = $_SESSION['role_id'];
 
-// Fetch package ID from query param
-$packageId = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    header('Location: package-list.php');
+    exit();
+}
 
-// Database connection
-$conn = new mysqli('localhost', 'projec15_root', '@kaesquare123', 'projec15_wandermate');
+$packageId = intval($_GET['id']);
+
+require_once 'DatabaseConnection.php';
+
+$conn = new DatabaseConnection();
+
 if ($conn->connect_error) {
     die('Database connection failed: ' . $conn->connect_error);
 }
 
-// Fetch package data
-$sql = 'SELECT p.*, p.price / p.group_size AS price_per_person, (SELECT url FROM images WHERE package_id = p.id LIMIT 1) AS image_url FROM packages p WHERE  p.id = ?';
+$sql = 'SELECT p.*, p.price / p.group_size AS price_per_person FROM packages p WHERE  p.id = ?';
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $packageId);
 $stmt->execute();
 $result = $stmt->get_result();
 $package = $result->fetch_assoc();
 
-// Fetch all images for this package
-$images = [];
-if ($package) {
-    $imgStmt = $conn->prepare('SELECT url FROM images WHERE package_id = ?');
-    $imgStmt->bind_param('i', $packageId);
-    $imgStmt->execute();
-    $imgResult = $imgStmt->get_result();
-    while ($imgRow = $imgResult->fetch_assoc()) {
-        $images[] = $imgRow['url'];
-    }
-    $imgStmt->close();
-}
 $stmt->close();
 $conn->close();
 
@@ -42,28 +35,15 @@ if (!$package) {
     exit();
 }
 
-// Parse highlights, includes, excludes, itinerary
-function parseNewlineList($str)
-{
-    return array_filter(array_map('trim', explode("\n", $str)));
+$images = [];
+foreach (explode("\n", $package['images']) as $image) {
+    $image = trim($image);
+    if (!empty($image)) {
+        $images[] = $image;
+    }
 }
 
-function parseItinerary($str)
-{
-    $result = [];
-    foreach (parseNewlineList($str) as $line) {
-        $parts = explode('|', $line, 2);
-        $day = isset($parts[0]) ? trim($parts[0]) : '';
-        $desc = isset($parts[1]) ? trim($parts[1]) : '';
-        if ($day !== '' && $desc !== '') {
-            $result[] = [
-                'day' => $day,
-                'desc' => $desc,
-            ];
-        }
-    }
-    return $result;
-}
+require_once 'utilities.php';
 
 $highlights = parseNewlineList($package['highlights']);
 $includes = parseNewlineList($package['includes']);
@@ -531,7 +511,7 @@ $itinerary = parseItinerary($package['itinerary']);
             <!-- Image Gallery -->
             <div class="gallery-container">
                 <img
-                    src="<?php echo htmlspecialchars($package['image_url']); ?>"
+                    src="<?php echo htmlspecialchars($images[0]); ?>"
                     alt="<?php echo htmlspecialchars($package['name']); ?>"
                     class="main-image"
                     id="mainImage"
@@ -591,10 +571,10 @@ $itinerary = parseItinerary($package['itinerary']);
                     <div class="detail-section">
                         <h2 class="section-title">Detailed Itinerary</h2>
 
-                        <?php foreach ($itinerary as $item): ?>
+                        <?php foreach ($itinerary as $day => $desc): ?>
                             <div class="itinerary-day">
-                                <h3 class="day-title"><?php echo htmlspecialchars($item['day']); ?></h3>
-                                <p><?php echo htmlspecialchars($item['desc']); ?></p>
+                                <h3 class="day-title"><?php echo htmlspecialchars($day); ?></h3>
+                                <p><?php echo htmlspecialchars($desc); ?></p>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -626,6 +606,12 @@ $itinerary = parseItinerary($package['itinerary']);
                     <span class="price-per-person">per person</span>
 
                     <div class="package-actions">
+                        <?php
+                        session_start();
+                        $loggedIn = isset($_SESSION['user_id']) && isset($_SESSION['role_id']);
+                        $role_id = $_SESSION['role_id'];
+                        ?>
+
                         <button
                             id="bookNowBtn"
                             class="btn btn-full"
@@ -685,10 +671,10 @@ $itinerary = parseItinerary($package['itinerary']);
                     </div>
 
                     <div class="form-group">
-                        <label for="travelers">Number of Travelers</label>
+                        <label for="groupAmount">Number of Groups</label>
                         <select
-                            id="travelers"
-                            name="travelers"
+                            id="groupAmount"
+                            name="groupAmount"
                             class="form-control"
                             required
                         >
@@ -788,13 +774,16 @@ $itinerary = parseItinerary($package['itinerary']);
                         body: formData,
                     });
                     const result = await response.json();
+
+                    console.log(result);
+
                     if (result.success) {
                         alert(result.message);
                     } else {
                         alert(result.message || "Failed to create order");
                     }
                 } catch (e) {
-                    alert("Failed to create order");
+                    alert(e);
                 }
 
                 // Close the modal

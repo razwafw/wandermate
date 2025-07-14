@@ -2,10 +2,11 @@
 require_once 'config.php';
 
 session_start();
-if (isset($_SESSION['user_id'])) {
+if (isset($_SESSION['user_id']) && isset($_SESSION['role_id'])) {
     header('Location: index.php');
     exit();
 }
+
 $error = isset($_GET['error']) && $_GET['error'] == 1;
 ?>
 <!DOCTYPE html>

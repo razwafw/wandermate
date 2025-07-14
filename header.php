@@ -4,9 +4,7 @@ if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
     exit('Direct access not allowed.');
 }
 
-session_start();
-$loggedIn = isset($_SESSION['user_id']);
-$role_id = $_SESSION['role_id'] ?? 1;
+global $loggedIn, $role_id;
 ?>
 
 <link

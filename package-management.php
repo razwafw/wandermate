@@ -6,14 +6,36 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
     header('Location: index.php');
     exit();
 }
-// Database connection
-$host = 'localhost';
-$user = 'projec15_root';
-$pass = '@kaesquare123';
-$db = 'projec15_wandermate';
-$conn = new mysqli($host, $user, $pass, $db);
+
+require_once 'DatabaseConnection.php';
+$conn = new DatabaseConnection();
 if ($conn->connect_error) {
     die('Database connection failed: ' . $conn->connect_error);
+}
+
+$packages = [];
+$sql = "SELECT * FROM packages";
+$result = $conn->query($sql);
+
+require_once 'utilities.php';
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $images = [];
+        foreach (explode("\n", $row['images']) as $image) {
+            $image = trim($image);
+            if (!empty($image)) {
+                $images[] = $image;
+            }
+        }
+
+        $row['images'] = $images;
+
+        $row['highlights'] = parseNewlineList($row['highlights']);
+        $row['includes'] = parseNewlineList($row['includes']);
+        $row['excludes'] = parseNewlineList($row['excludes']);
+        $row['itinerary'] = parseItinerary($row['itinerary']);
+        $packages[] = $row;
+    }
 }
 ?>
 
@@ -484,52 +506,6 @@ if ($conn->connect_error) {
                 echo '<div style="background:#f8d7da;color:#721c24;padding:15px;text-align:center;margin-bottom:20px;border-radius:5px;">Delete failed: There are existing orders for this package.</div>';
             } else if (isset($_GET['error'])) {
                 echo '<div style="background:#f8d7da;color:#721c24;padding:15px;text-align:center;margin-bottom:20px;border-radius:5px;">Operation failed. Please try again.</div>';
-            }
-
-            // Parse highlights, includes, excludes, itinerary
-            function parseNewlineList($str)
-            {
-                return array_filter(array_map('trim', explode("\n", $str)));
-            }
-
-            function parseItinerary($str)
-            {
-                $result = [];
-                foreach (parseNewlineList($str) as $line) {
-                    $parts = explode('|', $line, 2);
-                    $day = isset($parts[0]) ? trim($parts[0]) : '';
-                    $desc = isset($parts[1]) ? trim($parts[1]) : '';
-                    if ($day !== '' && $desc !== '') {
-                        $result[$day] = $desc;
-                    }
-                }
-                return $result;
-            }
-
-            // Fetch packages from database
-            $packages = [];
-            $sql = "SELECT * FROM packages";
-            $result = $conn->query($sql);
-            if ($result && $result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $packageId = $row['id'];
-                    // Fetch images for this package
-                    $imgSql = "SELECT url FROM images WHERE package_id = $packageId";
-                    $imgResult = $conn->query($imgSql);
-                    $images = [];
-                    if ($imgResult && $imgResult->num_rows > 0) {
-                        while ($imgRow = $imgResult->fetch_assoc()) {
-                            $images[] = $imgRow['url'];
-                        }
-                    }
-                    $row['images'] = $images;
-
-                    $row['highlights'] = parseNewlineList($row['highlights']);
-                    $row['includes'] = parseNewlineList($row['includes']);
-                    $row['excludes'] = parseNewlineList($row['excludes']);
-                    $row['itinerary'] = parseItinerary($row['itinerary']);
-                    $packages[] = $row;
-                }
             }
             ?>
 

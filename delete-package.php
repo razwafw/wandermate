@@ -1,16 +1,16 @@
 <?php
 require_once 'config.php';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo 'Method Not Allowed';
+    exit();
+}
+
 session_start();
 if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
     http_response_code(403);
     echo 'Unauthorized';
-    exit();
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo 'Method Not Allowed';
     exit();
 }
 
@@ -21,7 +21,8 @@ if (!$package_id) {
     exit();
 }
 
-$conn = new mysqli('localhost', 'projec15_root', '@kaesquare123', 'projec15_wandermate');
+require_once 'DatabaseConnection.php';
+$conn = new DatabaseConnection();
 if ($conn->connect_error) {
     die('Database connection failed: ' . $conn->connect_error);
 }
@@ -40,23 +41,25 @@ if ($orderCheck->num_rows > 0) {
 $orderCheck->close();
 
 // Delete images from server and DB
-$imgSql = "SELECT url FROM images WHERE package_id = ?";
+$imgSql = "SELECT images FROM packages WHERE id = ?";
 $imgStmt = $conn->prepare($imgSql);
 $imgStmt->bind_param('i', $package_id);
 $imgStmt->execute();
 $result = $imgStmt->get_result();
+
+require_once 'utilities.php';
 while ($row = $result->fetch_assoc()) {
-    $imgUrl = $row['url'];
-    if (file_exists($imgUrl)) {
-        unlink($imgUrl);
+    $images = $row['images'];
+
+    $images = parseNewlineList($images);
+
+    foreach ($images as $image) {
+        if (file_exists($image)) {
+            unlink($image);
+        }
     }
 }
 $imgStmt->close();
-
-$delImgStmt = $conn->prepare('DELETE FROM images WHERE package_id = ?');
-$delImgStmt->bind_param('i', $package_id);
-$delImgStmt->execute();
-$delImgStmt->close();
 
 // Delete package
 $delPkgStmt = $conn->prepare('DELETE FROM packages WHERE id = ?');

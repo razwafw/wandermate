@@ -2,17 +2,13 @@
 require_once 'config.php';
 
 session_start();
-if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role_id']) || $_SESSION['role_id'] != 2) {
     header('Location: index.php');
     exit();
 }
 
-// Database connection
-$host = 'localhost';
-$user = 'projec15_root';
-$pass = '@kaesquare123';
-$db = 'projec15_wandermate';
-$conn = new mysqli($host, $user, $pass, $db);
+require_once 'DatabaseConnection.php';
+$conn = new DatabaseConnection();
 if ($conn->connect_error) {
     die('Database connection failed: ' . $conn->connect_error);
 }

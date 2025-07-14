@@ -9,7 +9,7 @@ if (!$loggedIn) {
     exit();
 }
 
-$role_id = $_SESSION['role_id'] ?? 1;
+$role_id = $_SESSION['role_id'];
 
 if ($role_id !== 1) {
     header("Location: index.php");
@@ -18,36 +18,34 @@ if ($role_id !== 1) {
 
 $user_id = $_SESSION['user_id'];
 
-// Database connection
-$host = 'localhost';
-$user = 'projec15_root';
-$pass = '@kaesquare123';
-$db = 'projec15_wandermate';
-$conn = new mysqli($host, $user, $pass, $db);
+require_once 'DatabaseConnection.php';
+
+$conn = new DatabaseConnection();
+
 if ($conn->connect_error) {
     die('Database connection failed: ' . $conn->connect_error);
 }
 
-// Fetch orders for the logged-in user
-$sql = "SELECT o.id, o.booking_date, o.departure_date, o.amount, o.request, o.package_id, o.status_id, o.itinerary_url, 
-               p.name AS package_name, p.price AS package_price, p.group_size, s.name AS status_name
-        FROM orders o
-        JOIN packages p ON o.package_id = p.id
-        LEFT JOIN statuses s ON o.status_id = s.id
-        WHERE o.customer_id = ?
-        ORDER BY o.departure_date DESC";
+$sql = "
+    SELECT o.id, o.booking_date, o.departure_date, o.amount, o.request, o.package_id, o.status_id, o.itinerary_url, p.name AS package_name, p.price AS package_price, p.group_size, s.name AS status_name
+    FROM orders o
+    JOIN packages p ON o.package_id = p.id
+    LEFT JOIN statuses s ON o.status_id = s.id
+    WHERE o.customer_id = ?
+    ORDER BY o.departure_date
+";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
+
 $orders = [];
 while ($row = $result->fetch_assoc()) {
     $orders[] = $row;
 }
-$stmt->close();
 
-// Optionally, close the DB connection at the end of the script
-// $conn->close();
+$stmt->close();
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -435,10 +433,7 @@ $stmt->close();
         </div>
 
         <div class="container">
-            <?php
-            // Remove sample data and use fetched $orders from database
-            if (count($orders) > 0):
-                ?>
+            <?php if (count($orders) > 0): ?>
                 <div class="orders-container">
                     <table class="orders-table">
                         <thead>
@@ -537,7 +532,8 @@ $stmt->close();
                         type="button"
                         class="btn"
                         onclick="closeModal('orderDetailsModal')"
-                    >Close
+                    >
+                        Close
                     </button>
                 </div>
             </div>
@@ -564,13 +560,15 @@ $stmt->close();
                         type="button"
                         class="btn btn-outline"
                         onclick="closeModal('cancellationModal')"
-                    >No, Keep Booking
+                    >
+                        No, Keep Booking
                     </button>
                     <button
                         type="button"
                         class="btn"
                         id="confirmCancelBtn"
-                    >Yes, Cancel Booking
+                    >
+                        Yes, Cancel Booking
                     </button>
                 </div>
             </div>
