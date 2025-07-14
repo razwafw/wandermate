@@ -188,17 +188,28 @@ $conn->close();
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
         }
 
         .package-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
-        .package-image {
+        .package-img {
             height: 200px;
-            background-size: cover;
-            background-position: center;
+            overflow: hidden;
+        }
+
+        .package-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .package-card:hover .package-img img {
+            transform: scale(1.1);
         }
 
         .package-content {
@@ -302,29 +313,35 @@ $conn->close();
             </script>
 
             <div class="packages-grid">
-                <?php foreach ($packages as $package): ?>
-                    <div class="package-card">
-                        <div
-                            class="package-image"
-                            style="background-image: url('<?php echo htmlspecialchars($package['image']); ?>');"
-                        ></div>
-                        <div class="package-content">
-                            <h3 class="package-name"><?php echo htmlspecialchars($package['name']); ?></h3>
-                            <p class="package-description"><?php echo htmlspecialchars($package['description']); ?></p>
-                            <p class="package-price">From
-                                <span class="price-highlight">$<?php echo number_format($package['price_per_person']); ?></span> per person
-                            </p>
-                            <div class="package-action">
-                                <a
-                                    href="package-detail.php?id=<?php echo $package['id']; ?>"
-                                    class="btn"
+                <?php if (count($packages) > 0): ?>
+                    <?php foreach ($packages as $package): ?>
+                        <a
+                            class="package-card"
+                            href="package-detail.php?id=<?php echo $package['id']; ?>"
+                        >
+                            <div class="package-img">
+                                <img
+                                    src="<?php echo htmlspecialchars($package['image']); ?>"
+                                    alt="<?php echo htmlspecialchars($package['name']); ?>"
                                 >
-                                    View Details
-                                </a>
                             </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
+                            <div class="package-content">
+                                <h3 class="package-name"><?php echo htmlspecialchars($package['name']); ?></h3>
+                                <p class="package-description"><?php echo htmlspecialchars($package['description']); ?></p>
+                                <p class="package-price">From
+                                    <span class="price-highlight">$<?php echo number_format($package['price_per_person']); ?></span> per person
+                                </p>
+                                <div class="package-action">
+                                    <button class="btn">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No packages found.</p>
+                <?php endif; ?>
             </div>
         </div>
     </main>

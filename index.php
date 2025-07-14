@@ -217,15 +217,16 @@ $conn->close();
         }
 
         .package-card {
-            background-color: #fff;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
         }
 
         .package-card:hover {
             transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
         .package-img {
@@ -244,27 +245,36 @@ $conn->close();
             transform: scale(1.1);
         }
 
-        .package-info {
+        .package-content {
             padding: 20px;
         }
 
-        .package-info h3 {
-            font-size: 1.5rem;
+        .package-name {
+            font-size: 1.3rem;
+            font-weight: 600;
             margin-bottom: 10px;
             color: midnightblue;
         }
 
-        .price {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin: 15px 0;
-            color: #000;
+        .package-description {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
         }
 
-        .package-info .btn {
-            display: block;
+        .package-price {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .price-highlight {
+            color: midnightblue;
+            font-size: 1.2rem;
+        }
+
+        .package-action {
             text-align: center;
-            margin-top: 15px;
         }
 
         /* CTA Section */
@@ -366,44 +376,51 @@ $conn->close();
         </section>
 
         <!-- Packages Section -->
-        <section class="packages">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Popular Packages</h2>
-                    <p>Explore our most sought-after travel experiences and find your next dream destination.</p>
-
-                    <?php foreach ($popularPackages as $pkg): ?>
-                        <div class="package-card">
-                            <div class="package-img">
-                                <img
-                                    src="<?php echo htmlspecialchars($pkg['image']); ?>"
-                                    alt="<?php echo htmlspecialchars($pkg['name']); ?>"
-                                >
-                            </div>
-                            <div class="package-info">
-                                <h3><?php echo htmlspecialchars($pkg['name']); ?></h3>
-                                <p><?php echo htmlspecialchars($pkg['subtitle'] ?? (strlen($pkg['description']) > 100 ? substr($pkg['description'], 0, 100) . '...' : $pkg['description'])); ?></p>
-                                <div class="price">From $<?php echo number_format($pkg['price_per_person']); ?> per person</div>
-                                <a
-                                    href="package-detail.php?id=<?php echo $pkg['id']; ?>"
-                                    class="btn"
-                                >
-                                    View Details
-                                </a>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
+        <?php if (count($popularPackages) > 0): ?>
+            <section class="packages">
+                <div class="container">
+                    <div class="section-title">
+                        <h2>Popular Packages</h2>
+                        <p>Explore our most sought-after travel experiences and find your next dream destination.</p>
+                    </div>
+                    <div class="package-cards">
+                        <?php foreach ($popularPackages as $package): ?>
+                            <a
+                                class="package-card"
+                                href="package-detail.php?id=<?php echo $package['id']; ?>"
+                            >
+                                <div class="package-img">
+                                    <img
+                                        src="<?php echo htmlspecialchars($package['image']); ?>"
+                                        alt="<?php echo htmlspecialchars($package['name']); ?>"
+                                    >
+                                </div>
+                                <div class="package-content">
+                                    <h3 class="package-name"><?php echo htmlspecialchars($package['name']); ?></h3>
+                                    <p class="package-description"><?php echo htmlspecialchars($package['description']); ?></p>
+                                    <p class="package-price">From
+                                        <span class="price-highlight">$<?php echo number_format($package['price_per_person']); ?></span> per person
+                                    </p>
+                                    <div class="package-action">
+                                        <button class="btn">
+                                            View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                    <div style="text-align: center; margin: 0 auto;">
+                        <a
+                            href="package-list.php"
+                            class="btn"
+                        >
+                            See More
+                        </a>
+                    </div>
                 </div>
-                <div style="text-align: center; margin: 0 auto;">
-                    <a
-                        href="package-list.php"
-                        class="btn"
-                    >
-                        See More
-                    </a>
-                </div>
-            </div>
-        </section>
+            </section>
+        <?php endif; ?>
 
         <!-- CTA Section -->
         <section class="cta">
