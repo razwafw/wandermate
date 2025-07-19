@@ -1,4 +1,9 @@
 <?php
+if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
+    http_response_code(403);
+    exit('Direct access not allowed.');
+}
+
 global $modalId, $modalTitle, $modalContent, $modalFooter;
 ?>
 
