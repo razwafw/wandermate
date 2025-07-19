@@ -5,11 +5,6 @@ if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
 }
 ?>
 
-<link
-    rel="stylesheet"
-    href="sidebar.css"
->
-
 <aside class="sidebar">
     <div class="sidebar-brand">
         <h2>Wander<span>Mate</span></h2>
@@ -22,7 +17,7 @@ if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
                     href="dashboard.php"
                     class="nav-link"
                 >
-                    <span class="material-icons icon">dashboard</span>
+                    <i class="fa-solid fa-gauge icon"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
@@ -33,7 +28,7 @@ if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
                     href="logout.php"
                     class="nav-link"
                 >
-                    <span class="material-icons icon">logout</span>
+                    <i class="fa-solid fa-right-from-bracket icon"></i>
                     <span>Logout</span>
                 </a>
             </li>
@@ -45,7 +40,7 @@ if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
                     href="package-management.php"
                     class="nav-link"
                 >
-                    <span class="material-icons icon">luggage</span>
+                    <i class="fa-solid fa-suitcase-rolling icon"></i>
                     <span>Packages</span>
                 </a>
             </li>
@@ -54,7 +49,7 @@ if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
                     href="order-management.php"
                     class="nav-link"
                 >
-                    <span class="material-icons icon">shopping_cart</span>
+                    <i class="fa-solid fa-cart-shopping icon"></i>
                     <span>Orders</span>
                 </a>
             </li>

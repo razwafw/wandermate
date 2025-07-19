@@ -40,218 +40,36 @@ $conn->close();
     >
     <title>WanderMate - Travel Packages</title>
 
-    <!-- Global Styles -->
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
+    <link
+        rel="stylesheet"
+        href="global.css"
+    >
+    <link
+        rel="stylesheet"
+        href="header.css"
+    >
+    <link
+        rel="stylesheet"
+        href="page-header.css"
+    >
+    <link
+        rel="stylesheet"
+        href="package-list.css"
+    >
+    <link
+        rel="stylesheet"
+        href="package-card.css"
+    >
+    <link
+        rel="stylesheet"
+        href="modal.css"
+    >
+    <link
+        rel="stylesheet"
+        href="footer.css"
+    >
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #fff;
-            color: #000;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: midnightblue;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #1a1a5a;
-            color: #fff;
-        }
-
-        .btn-full {
-            width: 100%;
-            text-align: center;
-            padding: 15px;
-            font-size: 1.1rem;
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: midnightblue;
-            border: 1px solid midnightblue;
-        }
-
-        .btn-outline:hover {
-            background-color: rgba(25, 25, 112, 0.1);
-            color: midnightblue;
-        }
-
-        button[disabled] {
-            background-color: #cccccc !important;
-            color: #666666 !important;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        button[disabled]:hover {
-            background-color: #cccccc !important;
-            color: #666666 !important;
-        }
-    </style>
-
-    <!-- Page Styles-->
-    <style>
-        .page-header {
-            background-color: #f8f9fa;
-            padding: 60px 0;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .page-header h1 {
-            font-size: 2.5rem;
-            color: midnightblue;
-            margin-bottom: 10px;
-        }
-
-        .page-header p {
-            color: #666;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        /* Search Bar Styles */
-        .search-container {
-            max-width: 600px;
-            margin: 0 auto 40px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 30px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .search-input {
-            padding: 12px 20px;
-            border: 1px solid #ddd;
-            border-radius: 30px;
-            outline: none;
-            font-size: 16px;
-            width: 100%;
-            transition: all 0.3s;
-        }
-
-        .search-input:focus {
-            border-color: midnightblue;
-            box-shadow: 0 0 8px rgba(25, 25, 112, 0.2);
-        }
-
-        .search-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            position: absolute;
-            width: fit-content;
-            height: fit-content;
-            right: 30px;
-            color: #666;
-        }
-
-        .search-btn:hover {
-            color: midnightblue;
-        }
-
-        .packages-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-
-        .package-card {
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            text-decoration: none;
-        }
-
-        .package-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .package-img {
-            height: 200px;
-            overflow: hidden;
-        }
-
-        .package-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s;
-        }
-
-        .package-card:hover .package-img img {
-            transform: scale(1.1);
-        }
-
-        .package-content {
-            padding: 20px;
-        }
-
-        .package-name {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: midnightblue;
-        }
-
-        .package-description {
-            color: #666;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-
-        .package-price {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .price-highlight {
-            color: midnightblue;
-            font-size: 1.2rem;
-        }
-
-        .package-action {
-            text-align: center;
-        }
-
-        @media (max-width: 768px) {
-            .packages-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            }
-        }
-    </style>
-
-    <!-- Font Awesome -->
+    <!-- Font Awesome (for icons) -->
     <script
         src="https://kit.fontawesome.com/c880a1b0f6.js"
         crossorigin="anonymous"
@@ -263,90 +81,50 @@ $conn->close();
 
     <!-- Page Content -->
     <main>
-        <div class="page-header">
-            <div class="container">
-                <h1>Explore Our Travel Packages</h1>
-                <p>Discover carefully curated travel experiences that combine adventure, comfort, and unforgettable memories. From tropical getaways to cultural explorations, we have the perfect package for you.</p>
-            </div>
-        </div>
+        <?php
+        $title = 'Explore Our Travel Packages';
+        $subtitle = 'Discover carefully curated travel experiences that combine adventure, comfort, and unforgettable memories. From tropical getaways to cultural explorations, we have the perfect package for you.';
+        include 'page-header.php';
+        ?>
 
         <div class="container">
-            <div class="search-container">
-                <input
-                    type="text"
-                    class="search-input"
-                    placeholder="Search for packages, destinations..."
-                    id="package-search"
-                />
-                <button
-                    class="search-btn"
-                    onclick="document.querySelector('.search-input').focus();"
-                >
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-            </div>
-            <script>
-                // Debounce function
-                function debounce(fn, delay) {
-                    let timer = null;
-                    return function (...args) {
-                        clearTimeout(timer);
-                        timer = setTimeout(() => fn.apply(this, args), delay);
-                    };
-                }
+            <?php if (count($packages) > 0): ?>
+                <div class="search-container">
+                    <input
+                        type="text"
+                        class="search-input"
+                        placeholder="Search for packages, destinations..."
+                        id="package-search"
+                    />
+                    <button
+                        class="search-btn"
+                        onclick="document.querySelector('.search-input').focus();"
+                    >
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
 
-                // Search handler
-                function handleSearch() {
-                    const input = document.getElementById("package-search").value.trim().toLowerCase();
-                    const cards = document.querySelectorAll(".package-card");
-                    cards.forEach(card => {
-                        const name = card.querySelector(".package-name").textContent.toLowerCase();
-                        if (name.includes(input)) {
-                            card.style.display = "";
-                        } else {
-                            card.style.display = "none";
-                        }
-                    });
-                }
-
-                document.getElementById("package-search").addEventListener("input", debounce(handleSearch, 300));
-            </script>
-
-            <div class="packages-grid">
-                <?php if (count($packages) > 0): ?>
+                <div class="packages-grid">
                     <?php foreach ($packages as $package): ?>
-                        <a
-                            class="package-card"
-                            href="package-detail.php?id=<?php echo $package['id']; ?>"
-                        >
-                            <div class="package-img">
-                                <img
-                                    src="<?php echo htmlspecialchars($package['image']); ?>"
-                                    alt="<?php echo htmlspecialchars($package['name']); ?>"
-                                >
-                            </div>
-                            <div class="package-content">
-                                <h3 class="package-name"><?php echo htmlspecialchars($package['name']); ?></h3>
-                                <p class="package-description"><?php echo htmlspecialchars($package['description']); ?></p>
-                                <p class="package-price">From
-                                    <span class="price-highlight">$<?php echo number_format($package['price_per_person']); ?></span> per person
-                                </p>
-                                <div class="package-action">
-                                    <button class="btn">
-                                        View Details
-                                    </button>
-                                </div>
-                            </div>
-                        </a>
+                        <?php include 'package-card.php'; ?>
                     <?php endforeach; ?>
-                <?php else: ?>
-                    <p>No packages found.</p>
-                <?php endif; ?>
-            </div>
+                </div>
+            <?php endif; ?>
+
+            <p
+                id="noPackagesFound"
+                class="no-packages-found"
+                <?php if (count($packages) > 0) echo 'style="display: none;"'; ?>
+            >
+                No packages found.
+            </p>
         </div>
     </main>
 
     <!-- Footer -->
     <?php include 'footer.php'; ?>
+
+    <script src="header.js"></script>
+    <script src="package-list.js"></script>
 </body>
 </html>

@@ -1,0 +1,128 @@
+html {
+    scroll-behavior: smooth;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #fff;
+    color: #000;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+button {
+    cursor: pointer;
+}
+
+button[disabled] {
+    background-color: #cccccc !important;
+    color: #666666 !important;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+button[disabled]:hover {
+    background-color: #cccccc !important;
+    color: #666666 !important;
+}
+
+.btn {
+    display: inline-block;
+    background-color: midnightblue;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #1a1a5a;
+    color: #fff;
+}
+
+.btn-full {
+    width: 100%;
+    text-align: center;
+    padding: 15px;
+    font-size: 1.1rem;
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: midnightblue;
+    border: 1px solid midnightblue;
+}
+
+.btn-outline:hover {
+    background-color: rgba(25, 25, 112, 0.1);
+    color: midnightblue;
+}
+
+.btn-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status-confirmed {
+    background-color: #e3f7e8;
+    color: #0a8534;
+}
+
+.status-pending {
+    background-color: #fff8e6;
+    color: #cc8800;
+}
+
+.status-cancelled {
+    background-color: #ffeaea;
+    color: #cc0000;
+}

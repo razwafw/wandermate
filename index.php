@@ -47,284 +47,30 @@ $conn->close();
     >
     <title>WanderMate - Your Travel Partner</title>
 
-    <!-- Global Styles -->
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #fff;
-            color: #000;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: midnightblue;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #1a1a5a;
-            color: #fff;
-        }
-
-        button[disabled] {
-            background-color: #cccccc !important;
-            color: #666666 !important;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        button[disabled]:hover {
-            background-color: #cccccc !important;
-            color: #666666 !important;
-        }
-
-        .btn-full {
-            width: 100%;
-            text-align: center;
-            padding: 15px;
-            font-size: 1.1rem;
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: midnightblue;
-            border: 1px solid midnightblue;
-        }
-
-        .btn-outline:hover {
-            background-color: rgba(25, 25, 112, 0.1);
-            color: midnightblue;
-        }
-    </style>
-
-    <!-- Page Styles-->
-    <style>
-        /* Inter-section */
-        .section-title {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .section-title h2 {
-            font-size: 2.5rem;
-            color: #000;
-            margin-bottom: 15px;
-        }
-
-        .section-title p {
-            color: #555;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        /* Hero Section */
-        .hero {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('person-standing-near-cliff.jpg');
-            background-size: cover;
-            background-position: center;
-            height: 80vh;
-            display: flex;
-            align-items: center;
-            text-align: center;
-            color: #fff;
-            padding-top: 80px;
-        }
-
-        .hero-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-        }
-
-        /* About Section */
-        .about {
-            padding: 80px 0;
-            background-color: #f8f8f8;
-        }
-
-        .about-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 40px;
-        }
-
-        .about-text {
-            flex: 1;
-        }
-
-        .about-text h3 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: midnightblue;
-        }
-
-        .about-image {
-            flex: 1;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .about-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        /* Packages Section */
-        .packages {
-            padding: 80px 0;
-        }
-
-        .package-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
-            margin-bottom: 50px;
-        }
-
-        .package-card {
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            text-decoration: none;
-        }
-
-        .package-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .package-img {
-            height: 200px;
-            overflow: hidden;
-        }
-
-        .package-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s;
-        }
-
-        .package-card:hover .package-img img {
-            transform: scale(1.1);
-        }
-
-        .package-content {
-            padding: 20px;
-        }
-
-        .package-name {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: midnightblue;
-        }
-
-        .package-description {
-            color: #666;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-
-        .package-price {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .price-highlight {
-            color: midnightblue;
-            font-size: 1.2rem;
-        }
-
-        .package-action {
-            text-align: center;
-        }
-
-        /* CTA Section */
-        .cta {
-            background-color: midnightblue;
-            padding: 80px 0;
-            text-align: center;
-            color: #fff;
-        }
-
-        .cta h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-
-        .cta p {
-            max-width: 700px;
-            margin: 0 auto 30px;
-            font-size: 1.1rem;
-        }
-
-        .cta .btn {
-            background-color: #fff;
-            color: midnightblue;
-            font-weight: 600;
-        }
-
-        .cta .btn:hover {
-            background-color: #f0f0f0;
-            color: midnightblue;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            /* Inter-section */
-            .section-title h2 {
-                font-size: 2rem;
-            }
-
-            /* Hero Section */
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-
-            /* About Section */
-            .about-content {
-                flex-direction: column;
-            }
-        }
-    </style>
+    <link
+        rel="stylesheet"
+        href="global.css"
+    >
+    <link
+        rel="stylesheet"
+        href="header.css"
+    >
+    <link
+        rel="stylesheet"
+        href="index.css"
+    >
+    <link
+        rel="stylesheet"
+        href="package-card.css"
+    >
+    <link
+        rel="stylesheet"
+        href="modal.css"
+    >
+    <link
+        rel="stylesheet"
+        href="footer.css"
+    >
 </head>
 <body>
     <!-- Header -->
@@ -385,29 +131,7 @@ $conn->close();
                     </div>
                     <div class="package-cards">
                         <?php foreach ($popularPackages as $package): ?>
-                            <a
-                                class="package-card"
-                                href="package-detail.php?id=<?php echo $package['id']; ?>"
-                            >
-                                <div class="package-img">
-                                    <img
-                                        src="<?php echo htmlspecialchars($package['image']); ?>"
-                                        alt="<?php echo htmlspecialchars($package['name']); ?>"
-                                    >
-                                </div>
-                                <div class="package-content">
-                                    <h3 class="package-name"><?php echo htmlspecialchars($package['name']); ?></h3>
-                                    <p class="package-description"><?php echo htmlspecialchars($package['description']); ?></p>
-                                    <p class="package-price">From
-                                        <span class="price-highlight">$<?php echo number_format($package['price_per_person']); ?></span> per person
-                                    </p>
-                                    <div class="package-action">
-                                        <button class="btn">
-                                            View Details
-                                        </button>
-                                    </div>
-                                </div>
-                            </a>
+                            <?php include 'package-card.php'; ?>
                         <?php endforeach; ?>
                     </div>
                     <div style="text-align: center; margin: 0 auto;">
@@ -439,5 +163,7 @@ $conn->close();
 
     <!-- Footer -->
     <?php include 'footer.php'; ?>
+
+    <script src="header.js"></script>
 </body>
 </html>

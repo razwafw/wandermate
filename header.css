@@ -63,3 +63,48 @@ nav ul li a:hover {
         margin: 5px 10px;
     }
 }
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #444;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: midnightblue;
+    box-shadow: 0 0 0 2px rgba(25, 25, 112, 0.1);
+}
+
+.register-prompt {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid #eee;
+    color: #666;
+    width: 100%;
+}
+
+.register-prompt a {
+    color: midnightblue;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.register-prompt a:hover {
+    text-decoration: underline;
+}

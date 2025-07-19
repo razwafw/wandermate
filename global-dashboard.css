@@ -1,0 +1,34 @@
+.dashboard-container {
+    min-height: 100vh;
+    display: flex;
+}
+
+main {
+    flex: 1;
+    margin-left: 280px;
+    padding: 30px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.page-title {
+    font-size: 2rem;
+    color: midnightblue;
+}
+
+.page-subtitle {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+}
+
+@media (max-width: 992px) {
+    main {
+        margin-left: 80px;
+    }
+}

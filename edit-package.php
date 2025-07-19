@@ -2,20 +2,20 @@
 require_once 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: package-management.php?error=1');
+    header('Location: package-management.php');
     exit();
 }
 
 session_start();
 if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
-    header('Location: package-management.php?error=1');
+    header('Location: package-management.php');
     exit();
 }
 
 require_once 'DatabaseConnection.php';
 $conn = new DatabaseConnection();
 if ($conn->connect_error) {
-    header('Location: package-management.php?error=1');
+    header('Location: package-management.php');
     exit();
 }
 
@@ -34,12 +34,12 @@ $itinerary = trim($_POST['itinerary'] ?? '');
 $package_id = intval(trim($_POST['package_id'] ?? ''));
 
 if (!$name || !$subtitle || !$price || !$duration || !$group_size || !$start_location || !$end_location || !$description) {
-    header('Location: package-management.php?error=1');
+    header('Location: package-management.php');
     exit();
 }
 
 if (!$package_id) {
-    header('Location: package-management.php?error=1');
+    header('Location: package-management.php');
     exit();
 }
 
@@ -88,7 +88,7 @@ if (!empty($_FILES['package_images']['name'][0])) {
 
 $stmt = $conn->prepare("UPDATE packages SET name=?, subtitle=?, price=?, duration=?, group_size=?, start_location=?, end_location=?, description=?, highlights=?, includes=?, excludes=?, itinerary=?, images=? WHERE id=?");
 if (!$stmt) {
-    header('Location: package-management.php?error=1');
+    header('Location: package-management.php');
     exit();
 }
 $stmt->bind_param(
@@ -110,12 +110,12 @@ $stmt->bind_param(
 );
 
 if ($stmt->execute()) {
-    header('Location: package-management.php?success=1');
+    header('Location: package-management.php');
     exit();
 }
 
 $stmt->close();
 $conn->close();
 
-header('Location: package-management.php?error=1');
+header('Location: package-management.php');
 exit();

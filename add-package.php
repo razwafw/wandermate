@@ -3,20 +3,20 @@ require_once 'config.php';
 
 // Handle POST only
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: package-management.php?error=1');
+    header('Location: package-management.php');
     exit();
 }
 
 session_start();
 if (!isset($_SESSION['user_id']) || ($_SESSION['role_id'] ?? 1) != 2) {
-    header('Location: package-management.php?error=1');
+    header('Location: package-management.php');
     exit();
 }
 
 require_once 'DatabaseConnection.php';
 $conn = new DatabaseConnection();
 if ($conn->connect_error) {
-    header('Location: package-management.php?error=1');
+    header('Location: package-management.php');
     exit();
 }
 
@@ -35,7 +35,7 @@ $itinerary = trim($_POST['itinerary'] ?? '');
 
 // Validate required fields
 if (!$name || !$subtitle || !$price || !$duration || !$group_size || !$start_location || !$end_location || !$description) {
-    header('Location: package-management.php?error=1');
+    header('Location: package-management.php');
     exit();
 }
 
@@ -60,11 +60,12 @@ if (!empty($_FILES['package_images']['name'][0])) {
 $stmt = $conn->prepare("INSERT INTO packages (name, subtitle, price, duration, group_size, start_location, end_location, description, highlights, includes, excludes, itinerary, images) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 $stmt->bind_param('ssdssssssssss', $name, $subtitle, $price, $duration, $group_size, $start_location, $end_location, $description, $highlights, $includes, $excludes, $itinerary, $images);
 if (!$stmt->execute()) {
-    header('Location: package-management.php?error=1');
+    header('Location: package-management.php');
     exit();
 }
 $stmt->close();
 $conn->close();
+die();
 
-header('Location: package-management.php?success=1');
+header('Location: package-management.php');
 exit();

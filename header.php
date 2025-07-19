@@ -5,12 +5,71 @@ if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
 }
 
 global $loggedIn, $role_id;
-?>
 
-<link
-    rel="stylesheet"
-    href="header.css"
->
+if (!$loggedIn) {
+    $modalId = 'loginModal';
+    $modalTitle = 'Login';
+    $redirect = $_SERVER["REQUEST_URI"];
+    $modalContent = "
+        <form
+            action='login.php'
+            method='post'
+        >
+            <input type='hidden' name='redirect' value='$redirect'>
+        
+            <div class='form-group'>
+                <label for='email'>Email Address</label>
+                <input
+                    type='email'
+                    id='email'
+                    name='email'
+                    class='form-control'
+                    required
+                    placeholder='Enter your email'
+                >
+            </div>
+    
+            <div class='form-group'>
+                <label for='password'>Password</label>
+                <input
+                    type='password'
+                    id='password'
+                    name='password'
+                    class='form-control'
+                    required
+                    placeholder='Enter your password'
+                >
+            </div>
+    
+            <button
+                type='submit'
+                class='btn btn-full'
+            >
+                Login
+            </button>
+        </form>
+    ";
+    $modalFooter = "
+        <div class='register-prompt'>
+            <p>Don't have an account?
+                <a href='#'>Register now</a>
+            </p>
+        </div>
+    ";
+
+    include 'modal.php';
+
+    echo "
+        <script type='module'>
+            import { openModal } from './modal.js';
+            
+            document.getElementById('loginBtn').addEventListener('click', function () {
+                openModal('loginModal');
+            });
+        </script>
+    ";
+}
+?>
 
 <header>
     <div class="container nav-container">
@@ -31,12 +90,12 @@ global $loggedIn, $role_id;
 
                 <?php if (!$loggedIn): ?>
                     <li>
-                        <a
-                            href="login.php"
+                        <button
+                            id="loginBtn"
                             class="btn btn-sm"
                         >
                             Login
-                        </a>
+                        </button>
                     </li>
                 <?php else: ?>
                     <?php if ($role_id === 1): ?>
@@ -62,5 +121,3 @@ global $loggedIn, $role_id;
         </nav>
     </div>
 </header>
-
-<script src="header.js"></script>

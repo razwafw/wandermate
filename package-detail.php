@@ -61,437 +61,30 @@ $itinerary = parseItinerary($package['itinerary']);
     >
     <title>WanderMate - Package Details</title>
 
-    <!-- Global Styles -->
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #fff;
-            color: #000;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: midnightblue;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #1a1a5a;
-            color: #fff;
-        }
-
-        .btn-full {
-            width: 100%;
-            text-align: center;
-            padding: 15px;
-            font-size: 1.1rem;
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: midnightblue;
-            border: 1px solid midnightblue;
-        }
-
-        .btn-outline:hover {
-            background-color: rgba(25, 25, 112, 0.1);
-            color: midnightblue;
-        }
-
-        button[disabled] {
-            background-color: #cccccc !important;
-            color: #666666 !important;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        button[disabled]:hover {
-            background-color: #cccccc !important;
-            color: #666666 !important;
-        }
-    </style>
-
-    <!-- Page Styles-->
-    <style>
-        /* Package Detail Layout */
-        .package-header {
-            background-color: #f8f9fa;
-            padding: 40px 0;
-            margin-bottom: 30px;
-        }
-
-        .breadcrumb {
-            display: flex;
-            margin-bottom: 20px;
-            align-items: center;
-        }
-
-        .breadcrumb a {
-            color: #666;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .breadcrumb a:hover {
-            color: midnightblue;
-        }
-
-        .breadcrumb .separator {
-            margin: 0 10px;
-            color: #ccc;
-        }
-
-        .breadcrumb .current {
-            color: midnightblue;
-            font-weight: 500;
-        }
-
-        .package-title {
-            font-size: 2.5rem;
-            color: midnightblue;
-            margin-bottom: 10px;
-        }
-
-        .package-subtitle {
-            color: #666;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-        }
-
-        /* Image Gallery */
-        .gallery-container {
-            margin-bottom: 40px;
-            position: relative;
-        }
-
-        .main-image {
-            width: 100%;
-            height: 500px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-
-        .thumbnail-container {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 15px;
-        }
-
-        .thumbnail {
-            width: 120px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: opacity 0.3s;
-        }
-
-        .thumbnail:hover, .thumbnail.active {
-            opacity: 0.8;
-            border: 2px solid midnightblue;
-        }
-
-        /* Package Info Layout */
-        .package-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-
-        .package-details {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            padding: 30px;
-        }
-
-        .package-info-card {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            padding: 30px;
-            align-self: flex-start;
-            position: sticky;
-            top: 100px;
-        }
-
-        .package-price-large {
-            font-size: 2rem;
-            color: midnightblue;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .price-per-person {
-            display: block;
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-        }
-
-        .package-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        /* Login prompt styles */
-        .login-prompt {
-            display: none;
-            margin-top: 10px;
-            text-align: center;
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        button[disabled] + .login-prompt {
-            display: block;
-        }
-
-        /* Detail Sections */
-        .section-title {
-            font-size: 1.5rem;
-            color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .detail-section {
-            margin-bottom: 30px;
-        }
-
-        .detail-section p {
-            margin-bottom: 15px;
-            color: #444;
-        }
-
-        .highlights-list {
-            list-style-type: none;
-            padding-left: 5px;
-            margin-bottom: 20px;
-        }
-
-        .highlights-list li {
-            padding: 10px 0;
-            position: relative;
-            padding-left: 30px;
-            color: #444;
-        }
-
-        .highlights-list li:before {
-            content: "✓";
-            color: midnightblue;
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .info-item {
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-        }
-
-        .info-label {
-            font-weight: 600;
-            color: #555;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-        }
-
-        .info-value {
-            color: #333;
-            font-size: 1.1rem;
-        }
-
-        .itinerary-day {
-            margin-bottom: 25px;
-        }
-
-        .day-title {
-            font-weight: 600;
-            color: midnightblue;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.3s;
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 600px;
-            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
-            animation: slideIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            color: midnightblue;
-        }
-
-        .close {
-            color: #aaa;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover {
-            color: black;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #444;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: midnightblue;
-            box-shadow: 0 0 0 2px rgba(25, 25, 112, 0.1);
-        }
-
-        .form-row {
-            display: flex;
-            gap: 20px;
-        }
-
-        .form-row .form-group {
-            flex: 1;
-        }
-
-        .modal-footer {
-            margin-top: 30px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
-        }
-
-        /* Responsive styles */
-        @media (max-width: 768px) {
-            .main-image {
-                height: 300px;
-            }
-
-            .package-content {
-                grid-template-columns: 1fr;
-            }
-
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .package-info-card {
-                position: sticky;
-                bottom: 0;
-            }
-
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-        }
-
-        @media (max-height: 768px) {
-            .package-price-large, .price-per-person {
-                display: inline-block;
-            }
-
-            .return-to-list {
-                display: none;
-            }
-        }
-    </style>
+    <link
+        rel="stylesheet"
+        href="global.css"
+    >
+    <link
+        rel="stylesheet"
+        href="header.css"
+    >
+    <link
+        rel="stylesheet"
+        href="page-header.css"
+    >
+    <link
+        rel="stylesheet"
+        href="package-detail.css"
+    >
+    <link
+        rel="stylesheet"
+        href="modal.css"
+    >
+    <link
+        rel="stylesheet"
+        href="footer.css"
+    >
 </head>
 <body>
     <!-- Header -->
@@ -499,13 +92,12 @@ $itinerary = parseItinerary($package['itinerary']);
 
     <!-- Page Content -->
     <main>
-        <!-- Package Header -->
-        <div class="package-header">
-            <div class="container">
-                <h1 class="package-title"><?php echo htmlspecialchars($package['name']); ?></h1>
-                <p class="package-subtitle"><?php echo htmlspecialchars($package['subtitle']); ?></p>
-            </div>
-        </div>
+        <!-- Page Header -->
+        <?php
+        $title = htmlspecialchars($package['name']);
+        $subtitle = htmlspecialchars($package['subtitle']);
+        include 'page-header.php';
+        ?>
 
         <div class="container">
             <!-- Image Gallery -->
@@ -621,9 +213,7 @@ $itinerary = parseItinerary($package['itinerary']);
                         </button>
                         <?php if (!$loggedIn): ?>
                             <p class="login-prompt">
-                                Please
-                                <a href="login.php">log in</a>
-                                to book this package
+                                Please log in to book this package
                             </p>
                         <?php endif; ?>
                         <div class="return-to-list">
@@ -641,166 +231,88 @@ $itinerary = parseItinerary($package['itinerary']);
         </div>
 
         <!-- Booking Modal -->
-        <div
-            id="bookingModal"
-            class="modal"
-        >
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title">Book Your Trip</h2>
-                    <span class="close">&times;</span>
+        <?php
+        $modalId = 'bookingModal';
+        $modalTitle = 'Book Your Trip';
+        $packageId = $package['id'];
+        $modalContent = "
+            <form id='bookingForm'>
+                <input
+                    type='hidden'
+                    name='package_id'
+                    value='$packageId'
+                >
+
+
+                <div class='form-group'>
+                    <label for='departureDate'>Departure Date</label>
+                    <input
+                        type='date'
+                        id='departureDate'
+                        name='departureDate'
+                        class='form-control'
+                        required
+                    >
                 </div>
 
-                <form id="bookingForm">
-                    <input
-                        type="hidden"
-                        name="package_id"
-                        value="<?php echo $package['id']; ?>"
+                <div class='form-group'>
+                    <label for='groupAmount'>Number of Groups</label>
+                    <select
+                        id='groupAmount'
+                        name='groupAmount'
+                        class='form-control'
+                        required
                     >
+        ";
 
-
-                    <div class="form-group">
-                        <label for="departureDate">Departure Date</label>
-                        <input
-                            type="date"
-                            id="departureDate"
-                            name="departureDate"
-                            class="form-control"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label for="groupAmount">Number of Groups</label>
-                        <select
-                            id="groupAmount"
-                            name="groupAmount"
-                            class="form-control"
-                            required
-                        >
-                            <?php for ($i = 1; $i <= 10; $i++): ?>
-                                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-                            <?php endfor; ?>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="specialRequests">Special Requests (Optional)</label>
-                        <textarea
-                            id="specialRequests"
-                            name="specialRequests"
-                            class="form-control"
-                            rows="3"
-                        ></textarea>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button
-                            type="button"
-                            class="btn btn-outline"
-                            id="cancelBooking"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            class="btn"
-                        >
-                            Complete Booking
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </main>
-
-    <script>
-        // Image Gallery Functionality
-        function changeImage(src, thumbnail) {
-            // Update main image source
-            document.getElementById("mainImage").src = src;
-
-            // Remove active class from all thumbnails
-            document.querySelectorAll(".thumbnail").forEach(thumb => {
-                thumb.classList.remove("active");
-            });
-
-            // Add active class to clicked thumbnail
-            thumbnail.classList.add("active");
+        for ($i = 1; $i <= 10; $i++) {
+            $modalContent .= "<option value='$i'>$i</option>";
         }
 
-        // Modal Functionality
-        document.addEventListener("DOMContentLoaded", function () {
-            const modal = document.getElementById("bookingModal");
-            const bookNowBtn = document.getElementById("bookNowBtn");
-            const closeBtn = document.querySelector(".close");
-            const cancelBtn = document.getElementById("cancelBooking");
-            const bookingForm = document.getElementById("bookingForm");
+        $modalContent .= "
+                    </select>
+                </div>
+        
+                <div class='form-group'>
+                    <label for='specialRequests'>Special Requests (Optional)</label>
+                    <textarea
+                        id='specialRequests'
+                        name='specialRequests'
+                        class='form-control'
+                        rows='3'
+                    ></textarea>
+                </div>
+            </form>
+        ";
 
-            // Open modal when Book Now is clicked
-            bookNowBtn.addEventListener("click", function () {
-                modal.style.display = "block";
-                document.body.style.overflow = "hidden"; // Prevent scrolling
-            });
+        $modalFooter = "
+            <button
+                type='button'
+                class='btn btn-outline'
+                id='cancelBooking'
+            >
+                Cancel
+            </button>
+            <button
+                type='submit'
+                class='btn'
+                id='submitBooking'
+            >
+                Complete Booking
+            </button>
+        ";
 
-            // Close modal when X is clicked
-            closeBtn.addEventListener("click", function () {
-                modal.style.display = "none";
-                document.body.style.overflow = "auto"; // Enable scrolling
-            });
-
-            // Close modal when Cancel is clicked
-            cancelBtn.addEventListener("click", function () {
-                modal.style.display = "none";
-                document.body.style.overflow = "auto"; // Enable scrolling
-            });
-
-            // Close modal when clicking outside content area
-            window.addEventListener("click", function (event) {
-                if (event.target === modal) {
-                    modal.style.display = "none";
-                    document.body.style.overflow = "auto"; // Enable scrolling
-                }
-            });
-
-            // Handle form submission
-            bookingForm.addEventListener("submit", async function (event) {
-                event.preventDefault();
-
-                const formData = new FormData(bookingForm);
-                try {
-                    const response = await fetch("add-order.php", {
-                        method: "POST",
-                        body: formData,
-                    });
-                    const result = await response.json();
-
-                    console.log(result);
-
-                    if (result.success) {
-                        alert(result.message);
-                    } else {
-                        alert(result.message || "Failed to create order");
-                    }
-                } catch (e) {
-                    alert(e);
-                }
-
-                // Close the modal
-                modal.style.display = "none";
-                document.body.style.overflow = "auto"; // Enable scrolling
-
-                // Reset form
-                bookingForm.reset();
-            });
-
-            // Set min date for departure date input to today
-            const today = new Date().toISOString().split("T")[0];
-            document.getElementById("departureDate").setAttribute("min", today);
-        });
-    </script>
+        include 'modal.php';
+        ?>
+    </main>
 
     <!-- Footer -->
     <?php include 'footer.php'; ?>
+
+    <script src="header.js"></script>
+    <script
+        src="package-detail.js"
+        type="module"
+    ></script>
 </body>
 </html>

@@ -35,7 +35,7 @@ $orderCheck->store_result();
 if ($orderCheck->num_rows > 0) {
     $orderCheck->close();
     $conn->close();
-    header('Location: package-management.php?delete_failed=1');
+    header('Location: package-management.php');
     exit();
 }
 $orderCheck->close();
@@ -68,6 +68,6 @@ $delPkgStmt->execute();
 $delPkgStmt->close();
 
 $conn->close();
-header('Location: package-management.php?deleted=1');
+header('Location: package-management.php');
 exit();
 

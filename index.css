@@ -1,0 +1,142 @@
+/* Inter-section */
+.section-title {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-title h2 {
+    font-size: 2.5rem;
+    color: #000;
+    margin-bottom: 15px;
+}
+
+.section-title p {
+    color: #555;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Hero Section */
+.hero {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('person-standing-near-cliff.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+    padding-top: 80px;
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+/* About Section */
+.about {
+    padding: 80px 0;
+    background-color: #f8f8f8;
+}
+
+.about-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.about-text {
+    flex: 1;
+}
+
+.about-text h3 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: midnightblue;
+}
+
+.about-image {
+    flex: 1;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.about-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Packages Section */
+.packages {
+    padding: 80px 0;
+}
+
+.package-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+/* CTA Section */
+.cta {
+    background-color: midnightblue;
+    padding: 80px 0;
+    text-align: center;
+    color: #fff;
+}
+
+.cta h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.cta p {
+    max-width: 700px;
+    margin: 0 auto 30px;
+    font-size: 1.1rem;
+}
+
+.cta .btn {
+    background-color: #fff;
+    color: midnightblue;
+    font-weight: 600;
+}
+
+.cta .btn:hover {
+    background-color: #f0f0f0;
+    color: midnightblue;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    /* Inter-section */
+    .section-title h2 {
+        font-size: 2rem;
+    }
+
+    /* Hero Section */
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+
+    /* About Section */
+    .about-content {
+        flex-direction: column;
+    }
+}
