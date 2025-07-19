@@ -65,7 +65,6 @@ if (!$stmt->execute()) {
 }
 $stmt->close();
 $conn->close();
-die();
 
 header('Location: package-management.php');
 exit();
