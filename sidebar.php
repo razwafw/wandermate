@@ -17,8 +17,26 @@ if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
                     href="dashboard.php"
                     class="nav-link"
                 >
-                    <i class="fa-solid fa-gauge icon"></i>
+                    <i
+                        class="fa-solid fa-gauge icon"
+                        title="Dashboard"
+                    ></i>
                     <span>Dashboard</span>
+                </a>
+            </li>
+        </ul>
+        <ul>
+            <li>
+                <a
+                    href="index.php"
+                    class="nav-link"
+                    target="_blank"
+                >
+                    <i
+                        class="fa-solid fa-eye icon"
+                        title="View Site"
+                    ></i>
+                    <span>View Site</span>
                 </a>
             </li>
         </ul>
@@ -28,7 +46,10 @@ if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
                     href="logout.php"
                     class="nav-link"
                 >
-                    <i class="fa-solid fa-right-from-bracket icon"></i>
+                    <i
+                        class="fa-solid fa-right-from-bracket icon"
+                        title="Logout"
+                    ></i>
                     <span>Logout</span>
                 </a>
             </li>
@@ -40,7 +61,10 @@ if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
                     href="package-management.php"
                     class="nav-link"
                 >
-                    <i class="fa-solid fa-suitcase-rolling icon"></i>
+                    <i
+                        class="fa-solid fa-suitcase-rolling icon"
+                        title="Manage Packages"
+                    ></i>
                     <span>Packages</span>
                 </a>
             </li>
@@ -49,7 +73,10 @@ if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
                     href="order-management.php"
                     class="nav-link"
                 >
-                    <i class="fa-solid fa-cart-shopping icon"></i>
+                    <i
+                        class="fa-solid fa-cart-shopping icon"
+                        title="Manage Orders"
+                    ></i>
                     <span>Orders</span>
                 </a>
             </li>
